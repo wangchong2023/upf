@@ -9,7 +9,7 @@
 | **IS.QA.003** | QA 抽查 | **PROCESS** | 设计与实现严重脱节：pdr_match_key_t 核心结构在源码中缺失。 | RR.UPF.003 | **Closed** | PDR-SKELETON | 源码中已建立 pdr_match.h |
 | **IS.QA.001** | QA 审计 | PROCESS | 重大工程目录与命名体系重构缺失 RCR 变更单。 | N/A (工程治理) | **Closed** | RCR.002 | 已补录 RCR |
 | **IS.QA.002** | QA 审计 | **PROCESS** | SDS 方案缺失 DFMEA 可靠性分析初步结论。 | RR.UPF.003 | **Closed** | SDS-REFILL | 已回填 SDS |
-| **IS.BLOCKER.001** | QA 审计 | **PROCESS** | API 规格缺失：N4 接口定义尚未同步至 OpenAPI 3.0。 | N/A | **Fixed** | API-N4-INIT | 已补充 OpenAPI 设计文档 |
+| | | | | | | | |
 | | | | | | | | |
 
 ## 2. 闭环准则

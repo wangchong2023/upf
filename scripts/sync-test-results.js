@@ -8,12 +8,17 @@ const path = require('path');
 
 const rtmPath = 'docs/spec-rtm.md';
 const tcDir = 'docs/verification/test-cases';
-// 模拟的测试结果输入 (生产环境下应由 test-runner 生成)
-const mockResults = [
-    { id: "TC.SR.UPF.001.01.001", status: "PASSED", duration: "120ms" },
-    { id: "TC.SR.UPF.001.01.002", status: "PASSED", duration: "85ms" },
-    { id: "TC.SR.UPF.001.01.003", status: "FAILED", duration: "200ms", error: "Timeout" }
-];
+const resultsPath = 'docs/verification/test-results.json';
+
+// 获取测试结果逻辑
+let results = [];
+if (fs.existsSync(resultsPath)) {
+    console.log(`📂 Found real test results at ${resultsPath}`);
+    results = JSON.parse(fs.readFileSync(resultsPath, 'utf-8'));
+} else {
+    console.warn("⚠️ No test results found. Please run tests first.");
+    process.exit(0);
+}
 
 console.log("🔄 Starting Automated Test Result Back-filling...");
 

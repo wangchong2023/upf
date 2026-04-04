@@ -23,12 +23,8 @@ function getDependencies() {
         // 实际逻辑应为解析 go list -m all 或 go.mod 内容
     }
     
-    // 默认基础依赖
-    return [
-        { name: "github.com/google/uuid", version: "v1.3.0", license: "BSD-3-Clause" },
-        { name: "github.com/sirupsen/logrus", version: "v1.9.0", license: "MIT" },
-        { name: "dpdk-vpp-core", version: "v22.10", license: "Apache-2.0" }
-    ];
+    // 默认基础依赖 (不再提供模拟数据)
+    return [];
 }
 
 const dependencies = getDependencies();
