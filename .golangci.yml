@@ -1,0 +1,13 @@
+# golangci-lint 配置：UPF 项目代码质量红线
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+
+linters:
+  enable:
+    - govet
+    - gocyclo
+
+issues:
+  exclude-use-default: false

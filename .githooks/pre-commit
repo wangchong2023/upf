@@ -1,0 +1,18 @@
+#!/bin/bash
+# .githooks/pre-commit: 提交前强制执行文档一致性检查
+
+echo "Running Pre-commit Quality Gate: Documentation Consistency..."
+
+# 1. 运行一致性检查脚本
+./scripts/check_consistency.sh
+
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo "[ERROR] README.md 与物理 Skill 目录不一致！"
+    echo "请运行相关更新脚本或手动修正 README.md 中的技能数量。"
+    exit 1
+fi
+
+echo "[SUCCESS] Documentation matches physical skills. Proceeding with commit..."
+exit 0

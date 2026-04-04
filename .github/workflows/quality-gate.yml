@@ -1,0 +1,44 @@
+name: IPD Quality Gate & TR Audit
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  audit:
+    name: Execute Quality Gate
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Initialize Quality Gate
+        run: |
+          mkdir -p docs/verification
+          # 此处可扩展安装 lint 工具
+
+      - name: Run IPD Quality Gate
+        run: make quality-gate
+        # 注意：由于 CI 环境缺乏 C 编译器环境，
+        # 实际项目中应使用容器化环境或分步骤执行。
+        # 这里的 make quality-gate 将按序触发 doc-check, tr-audit, oss-audit 等。
+
+      - name: Archive Audit Reports
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: ipd-audit-reports
+          path: docs/verification/*.md

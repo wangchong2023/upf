@@ -1,9 +1,9 @@
 ---
 name: intf-3gpp
-description: 定义UPF对外的标准协议接口，保障互联互通
+description: 3GPP 外部协议接口规范 (N3/N4/N6)，指导协议栈开发与信元映射
 ---
 
-# 外部3GPP接口规范 (intf-3gpp)
+# 外部 3GPP 协议接口规范 (intf-3gpp)
 
 ## 工作流
 1. 理解业务背景与外部3GPP接口规范的核心要求。

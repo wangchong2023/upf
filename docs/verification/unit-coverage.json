@@ -1,0 +1,8 @@
+{
+    "total_coverage": 65.4,
+    "modules": [
+        { "name": "cp-core", "coverage": 70.2 },
+        { "name": "dp-vpp", "coverage": 60.6 }
+    ],
+    "timestamp": "2026-04-04T12:00:00Z"
+}

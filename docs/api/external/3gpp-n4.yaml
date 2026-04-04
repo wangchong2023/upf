@@ -1,0 +1,86 @@
+openapi: 3.0.3
+info:
+  title: 5G UPF N4 Interface (PFCP) Specification
+  description: |
+    This specification defines the N4 interface (Packet Forwarding Control Protocol) between SMF and UPF, 
+    based on 3GPP TS 29.244. This is a logical design document used to drive the Control Plane core logic.
+  version: 1.0.0-draft
+servers:
+  - url: /v1
+paths:
+  /sessions:
+    post:
+      summary: PFCP Session Establishment
+      operationId: establishSession
+      tags:
+        - Session Management
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SessionEstablishmentRequest'
+      responses:
+        '201':
+          description: Session Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SessionEstablishmentResponse'
+        '400':
+          description: Invalid Request
+
+components:
+  schemas:
+    SessionEstablishmentRequest:
+      type: object
+      required:
+        - nodeId
+        - fseid
+        - pdrs
+      properties:
+        nodeId:
+          type: string
+          description: FQDN or IP Address of the sending node
+        fseid:
+          type: string
+          description: Fully Qualified SEID
+        pdrs:
+          type: array
+          items:
+            $ref: '#/components/schemas/PDR'
+    
+    PDR:
+      type: object
+      required:
+        - pdrId
+        - precedence
+        - pdi
+      properties:
+        pdrId:
+          type: integer
+        precedence:
+          type: integer
+        pdi:
+          $ref: '#/components/schemas/PDI'
+
+    PDI:
+      type: object
+      description: Packet Detection Information
+      properties:
+        sourceInterface:
+          type: string
+          enum: [CORE, ACCESS, SGi-LAN]
+        teid:
+          type: integer
+        ueIpAddress:
+          type: string
+
+    SessionEstablishmentResponse:
+      type: object
+      properties:
+        cause:
+          type: string
+          enum: [REQUEST_ACCEPTED, REQUEST_REJECTED]
+        fseid:
+          type: string

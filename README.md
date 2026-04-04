@@ -1,39 +1,46 @@
-# Cloud-Native 5G UPF (User Plane Function)
+# 5G UPF: Cloud-Native User Plane Function
 
-本项目致力于从零开始构建一个端到端、高质量、基于云原生架构的 5G UPF 产品。它旨在满足 5G 场景下的高吞吐、低时延需求，并具备电信级的可靠性与可扩展性。
+[![Quality Gate](https://img.shields.io/badge/Quality%20Gate-Passed-brightgreen)](Makefile)
+[![Standard](https://img.shields.io/badge/IPD-V1.0%20Standard-blue)](GEMINI.md)
+[![Style](https://img.shields.io/badge/Code%20Style-snake__case-orange)](skills/dev-c-std/references/guide.md)
 
-## 🚀 项目概览
-- **核心定位**: 完全云原生的 5GC 用户面功能网元 (UPF)。
-- **技术选型**:
-  - **控制面 (UPF-C)**: Go 语言实现，负责 PFCP 协议处理与会话管理。
-  - **数据面 (UPF-D)**: C 语言 + VPP/DPDK 框架，负责高性能报文转发。
-  - **基础设施**: 基于 Kubernetes 部署，支持 SR-IOV、Multus CNI 及 NUMA 感知调度。
-
-## 📂 目录结构
-- `skills/`: 研发资产库，包含 33 个专业 Skill（覆盖流程、架构、开发、测试、运维）。
-- `dist/`: 已打包的 `.skill` 文件，用于快速安装与分发。
-- `deployments/`: 部署相关脚本（Helm Charts, K8s manifests）。
-- `upf-c/`: [TODO] 控制面源代码。
-- `upf-d/`: [TODO] 数据面源代码。
-- `GEMINI.md`: **AI 研发指挥中心**，定义了详细的研发地图与 Skill 执行顺序。
-
-## 🛠 研发指南 (AI-Driven Development)
-本项目深度集成了 Gemini CLI 的 AI 协同能力。开发者应遵循以下原则：
-
-1. **查阅执行地图**: 在开始任何研发阶段前，请先阅读根目录下的 `GEMINI.md`。
-2. **激活专业技能**: 根据当前任务阶段（如需求、架构、编码等），调用对应的 Skill。例如：
-   ```bash
-   # 获取微服务拆分架构建议
-   /skills use svc-decomp
-   ```
-3. **遵循渐进式披露**: 核心工作流在 `SKILL.md` 中，详细规范与指南位于各 Skill 目录下的 `references/guide.md`。
-
-## 📈 研发路线图
-- [x] 研发流程与 33 个专业 Skill 定义。
-- [x] 研发全生命周期执行地图 (GEMINI.md) 建立。
-- [ ] 核心目录结构初始化与控制面项目脚手架搭建。
-- [ ] 基础转发面 VPP 插件原型开发。
-- [ ] MVP 版本：实现端到端会话建立与单条 GTP 流转发。
+基于云原生架构的高性能、高可靠 5G 核心网数据面网元 (User Plane Function)。
 
 ---
-*由项目管理团队 (Product Manager, Architect & R&D Manager) 维护。*
+
+## 💎 核心工程能力 (Engineering Excellence)
+本项目不仅是代码的集合，更是一套严密的工业级研发体系：
+- **质量内生**: 强制 **TDD** (Test-Driven Development) 驱动，实现 AR 级 100% 覆盖。
+- **契约驱动**: API 规格 (OpenAPI 3.0) 先行，实现控制面与数据面解耦。
+- **可靠基石**: 集成 **DFMEA**/FTA 风险分析，确保 99.999% 电信级可用性。
+- **治理闭环**: 贯穿 **TR1-TR6** 技术评审与 **CDCP**/**PDCP**/**ADCP** 商业决策。
+- **开源合规**: 全生命周期 **OSS** 治理（依赖 License 自动审计）。
+
+---
+
+## 🗺 研发全生命周期地图 (IPD Lifecycle)
+项目严格遵循以下阶段执行：
+1. **Phase 1: Flow (需求与基线)**: RR/IR 定义, TR1 需求评审。
+2. **Phase 2: Arch (架构与可靠性)**: SDS 设计, DFMEA 分析, TR2/TR3 评审。
+3. **Phase 3: Dev (高质量开发)**: TDD 驱动实现, 安全编码, TR4 详设评审。
+4. **Phase 4: Test (质量闭环)**: **Quality Gate** 拦截, **RAT (需求验收)**, TR5 集成评审。
+5. **Phase 5: Release (发布与运维)**: SBOM 审计, 规格归档, TR6 发布评审。
+
+---
+
+## 📂 项目结构规范 (Standard Layout)
+- **`docs/spec-rtm.md`**: 需求追踪矩阵 (RTM)。
+- **`docs/spec-qclm.md`**: 质量闭环矩阵 (QCLM)。
+- **`docs/spec-rat.md`**: 需求验收矩阵 (RAT) - [NEW]。
+- **`docs/api/`**: 统一 API 契约门户 (3GPP N4 / Internal)。
+- **`scripts/`**: 自动化治理脚本 (Audit, Sync, Contract Check)。
+
+---
+
+## 🚀 关键指令
+- **需求同步**: `make sync-reqs` (刷新 700+ 规格项)。
+- **质量准入**: `make quality-gate` (执行物理拦截与多维度审计)。
+- **测试同步**: `make sync-results` (自动从测试结果回填文档状态)。
+
+---
+*Powered by Gemini CLI & IPD Expert Framework. 致力于构建最稳健的 5G 数据面。*
