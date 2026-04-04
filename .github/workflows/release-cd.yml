@@ -1,0 +1,61 @@
+name: 5G UPF CI/CD Release Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    tags:
+      - 'v*'
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  # 阶段 1: 质量审计 (Quality Gate)
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run Full Quality Gate
+        run: |
+          export ACTIVE_ROLE=QA
+          export ACTIVE_TOKEN=${{ secrets.QA_TOKEN }}
+          make quality-gate
+        continue-on-error: false
+
+  # 阶段 2: 物理发布 (Only on Tags)
+  release:
+    needs: audit
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and Archive Artifacts
+        run: make archive VERSION=${{ github.ref_name }}
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          generate_release_notes: true
+          files: |
+            CHANGELOG.md
+            docs/upf-development-dashboard.md
+            dist/upf-5g-${{ github.ref_name }}.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # 阶段 3: 镜像打包与推送 (Production Grade)
+  package:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build Docker Image
+        run: make docker-build VERSION=${{ github.ref_name }}
+      - name: Push to Registry (Mock)
+        run: echo "Pushing upf-5g:${{ github.ref_name }} to registry..."

@@ -174,6 +174,22 @@ branch-release:
 branch-hotfix:
 	@node scripts/mgr-branch-mgmt.js --action=hotfix --name=$(ID)
 
+# 二进制构建 (Control Plane)
+build-cp:
+	@echo "Building UPF Control Plane..."
+	@go build -o bin/upf-cp ./src/cp-core/main.go
+
+# 镜像打包
+docker-build:
+	@echo "Building Cloud-Native Docker Image..."
+	@docker build -t upf-5g:$(if $(VERSION),$(VERSION),latest) .
+
+# 制品归档 (打包二进制与文档)
+archive: build-cp
+	@echo "Archiving artifacts..."
+	@mkdir -p dist
+	@tar -cvzf dist/upf-5g-$(if $(VERSION),$(VERSION),latest).tar.gz bin/ docs/ README.md
+
 # 自动纠偏总入口
 fix-all: format-go format-c format-scripts doc-sync
 	@echo "✅ All codebases have been auto-corrected."

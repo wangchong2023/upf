@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: upf-5g
+  namespace: upf-system
+  labels:
+    app: upf
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: upf
+  template:
+    metadata:
+      labels:
+        app: upf
+    spec:
+      containers:
+      - name: upf-cp
+        image: upf-5g:latest # Should be updated by CI/CD
+        ports:
+        - containerPort: 8080 # OAM API
+        - containerPort: 8805 # PFCP (N4)
+        env:
+        - name: ACTIVE_ROLE
+          value: "RUNTIME"
+        volumeMounts:
+        - name: vpp-config
+          mountPath: /etc/vpp/
+      volumes:
+      - name: vpp-config
+        configMap:
+          name: vpp-config-map
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: upf-n4-svc
+  namespace: upf-system
+spec:
+  selector:
+    app: upf
+  ports:
+  - name: pfcp
+    protocol: UDP
+    port: 8805
+    targetPort: 8805
+  type: LoadBalancer
