@@ -162,13 +162,15 @@ format-c:
 
 lint-c: cppcheck clang-tidy test-asan
 
-# 分支管理 (示例: make branch-feature ID=001)
+# 分支管理: 创建特性开发分支 (示例: make branch-feature ID=001)
 branch-feature:
 	@node scripts/mgr-branch-mgmt.js --action=feature --name=$(ID)
 
+# 分支管理: 创建发布冻结分支 (示例: make branch-release VERSION=1.0.0)
 branch-release:
 	@node scripts/mgr-branch-mgmt.js --action=release --name=$(VERSION)
 
+# 分支管理: 创建紧急热修分支 (示例: make branch-hotfix ID=001)
 branch-hotfix:
 	@node scripts/mgr-branch-mgmt.js --action=hotfix --name=$(ID)
 

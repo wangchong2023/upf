@@ -68,6 +68,9 @@
 - **agent-risk**: 风险 Agent: 自动跟踪风险矩阵并生成预警
 - **parallel-planning**: 并行规划: 同步触发需求同步、分解与架构审计建议
 - **parallel-dev-test**: 并行开发与测试: Dev 实现逻辑的同时 Tester 自动生成测试桩
+- **branch-feature**: 分支管理: 创建特性开发分支 (示例: make branch-feature ID=001)
+- **branch-release**: 分支管理: 创建发布冻结分支 (示例: make branch-release VERSION=1.0.0)
+- **branch-hotfix**: 分支管理: 创建紧急热修分支 (示例: make branch-hotfix ID=001)
 - **fix-all**: 自动纠偏总入口
 
 ---
