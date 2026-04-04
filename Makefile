@@ -190,6 +190,25 @@ archive: build-cp
 	@mkdir -p dist
 	@tar -cvzf dist/upf-5g-$(if $(VERSION),$(VERSION),latest).tar.gz bin/ docs/ README.md
 
+# 跨版本变更同步 (示例: make backport COMMIT=c0ffee)
+backport:
+	@echo "🔄 Backporting commit $(COMMIT) to develop..."
+	@git checkout develop
+	@git cherry-pick $(COMMIT)
+	@echo "✅ Backport completed. Running quality gate..."
+	@$(MAKE) quality-gate
+
+# 版本完备性报告 (TR6 准出物)
+release-report:
+	@echo "📊 Generating Final Release Integrity Report for $(VERSION)..."
+	@mkdir -p dist/reports
+	@echo "# Release Integrity Report - $(VERSION)" > dist/reports/integrity.md
+	@echo "## 1. Requirement Coverage" >> dist/reports/integrity.md
+	@grep -c "✅" docs/spec-rtm.md >> dist/reports/integrity.md
+	@echo "## 2. Open Issues" >> dist/reports/integrity.md
+	@grep -c "Open" docs/spec-qclm.md >> dist/reports/integrity.md
+	@echo "✅ Report generated at dist/reports/integrity.md"
+
 # 自动纠偏总入口
 fix-all: format-go format-c format-scripts doc-sync
 	@echo "✅ All codebases have been auto-corrected."
