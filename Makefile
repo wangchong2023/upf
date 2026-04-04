@@ -184,10 +184,13 @@ docker-build:
 	@echo "Building Cloud-Native Docker Image..."
 	@docker build -t upf-5g:$(if $(VERSION),$(VERSION),latest) .
 
-# 制品归档 (打包二进制与文档)
+# 制品归档 (打包二进制、文档及版本清单)
 archive: build-cp
 	@echo "Archiving artifacts..."
-	@mkdir -p dist
+	@mkdir -p dist bin
+	@echo "Version: $(if $(VERSION),$(VERSION),latest)" > bin/MANIFEST
+	@echo "Commit: $$(git rev-parse HEAD)" >> bin/MANIFEST
+	@echo "BuildTime: $$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> bin/MANIFEST
 	@tar -cvzf dist/upf-5g-$(if $(VERSION),$(VERSION),latest).tar.gz bin/ docs/ README.md
 
 # 跨版本变更同步 (示例: make backport COMMIT=c0ffee)
@@ -203,10 +206,15 @@ release-report:
 	@echo "📊 Generating Final Release Integrity Report for $(VERSION)..."
 	@mkdir -p dist/reports
 	@echo "# Release Integrity Report - $(VERSION)" > dist/reports/integrity.md
-	@echo "## 1. Requirement Coverage" >> dist/reports/integrity.md
-	@grep -c "✅" docs/spec-rtm.md >> dist/reports/integrity.md
-	@echo "## 2. Open Issues" >> dist/reports/integrity.md
-	@grep -c "Open" docs/spec-qclm.md >> dist/reports/integrity.md
+	@echo "## 1. Version Metadata" >> dist/reports/integrity.md
+	@echo "- **Commit ID**: $$(git rev-parse HEAD)" >> dist/reports/integrity.md
+	@echo "- **Release Tag**: $(VERSION)" >> dist/reports/integrity.md
+	@echo "- **Build Time**: $$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> dist/reports/integrity.md
+	@echo "## 2. Requirement Coverage" >> dist/reports/integrity.md
+	@echo "- Total Requirements: $$(grep -c "| \*\*RR.UPF." docs/spec-rtm.md)" >> dist/reports/integrity.md
+	@echo "- Verified: $$(grep -c "✅" docs/spec-rtm.md)" >> dist/reports/integrity.md
+	@echo "## 3. Open Issues" >> dist/reports/integrity.md
+	@echo "- Count: $$(grep -c "Open" docs/spec-qclm.md)" >> dist/reports/integrity.md
 	@echo "✅ Report generated at dist/reports/integrity.md"
 
 # 自动纠偏总入口
