@@ -8,11 +8,11 @@ import "log"
  */
 
 func Info(msg string) {
-    log.SetPrefix("[UPF-INFO] ")
-    log.Println(msg)
+	log.SetPrefix("[UPF-INFO] ")
+	log.Println(msg)
 }
 
 func Error(msg string) {
-    log.SetPrefix("[UPF-ERROR] ")
-    log.Println(msg)
+	log.SetPrefix("[UPF-ERROR] ")
+	log.Println(msg)
 }

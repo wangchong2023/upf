@@ -67,7 +67,10 @@ doc-sync:
 dashboard:
 	@node scripts/mgr-dashboard-refresh.js
 
-# 脚本规范审计
+# 脚本规范审计与修复
+format-scripts:
+	@node scripts/mgr-script-audit.js --fix
+
 lint-scripts:
 	@node scripts/mgr-script-audit.js
 
@@ -127,7 +130,11 @@ quality-gate: doc-sync lint-scripts auto-doc-check sync-reqs gen-test-cases sync
 	@echo "All quality gates passed for stage: $$(cat .milestone)"
 
 
-# Go 语言检查
+# Go 语言格式化与检查
+format-go:
+	@echo "Formatting Go code..."
+	@gofmt -w src/
+
 lint-go:
 	@echo "Running golangci-lint..."
 	@if [ -f cmd/cp/session_store.go ] && grep -q "GetCounterComplexity" cmd/cp/session_store.go; then \
@@ -136,7 +143,15 @@ lint-go:
 	fi
 
 # C 语言白盒检查总入口 (集成 ASan 扫描)
+format-c:
+	@echo "Formatting C code..."
+	@if [ -n "$(C_SRC)" ]; then clang-format -i $(C_SRC); fi
+
 lint-c: cppcheck clang-tidy test-asan
+
+# 自动纠偏总入口
+fix-all: format-go format-c format-scripts doc-sync
+	@echo "✅ All codebases have been auto-corrected."
 
 # ASan 内存安全检查
 # 该目标将编译并运行测试，若存在内存泄漏或非法访问，ASan 将直接报错终止并报告位置

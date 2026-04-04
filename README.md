@@ -17,15 +17,16 @@
 | **流程变革管控** | QA 指导与全量监控已开启 | `mgr-qa-expert` |
 | **角色化 Agent** | PM/SE/Arch/QA 协同已就绪 | `scripts/mgr-agent-*` |
 | **并行工作流** | Dev 与 Tester 原子化并行 | `make parallel-*` |
+| **自动纠偏** | C/Go/JS 全语言修复已开启 | `make fix-all` |
 | **API 契约** | OpenAPI 3.0 (N4) 已锁定 | `api-contract-check` |
 
 ---
 
 ## 💎 核心工程能力
-- **QA 专家驱动**: 独立审计脚本 + **全量流程监控**。任何流程变更均在 QA 指导下进行。
-- **Agent 自动化协同**: 通过 PM、SE、Architect 及 QA Agent 自动化执行重复性治理任务。
-- **并行任务编排**: 利用 `make -j` 与原子权限，支持开发与测试桩生成的并行推进。
-- **物理门控**: 拦截 RTM 失败项、OSS 违规项及契约偏差。
+- **QA 专家驱动**: 独立审计脚本 + **全量流程监控**。任何流程变革均在 QA 指导下进行。
+- **Agent 自动化协同**: 集成 **280+ 全局专家技能**，自动化执行需求、架构、质量及风险治理任务。
+- **并行任务编排**: 利用 `make -j` 与原子权限，支持规划、开发与测试桩生成的同步推进。
+- **物理门控与纠偏**: `pre-commit` 物理拦截非合规代码，并支持全语言自动纠偏。
 
 ---
 
@@ -65,6 +66,7 @@
 - **agent-risk**: 风险 Agent: 自动跟踪风险矩阵并生成预警
 - **parallel-planning**: 并行规划: 同步触发需求同步、分解与架构审计建议
 - **parallel-dev-test**: 并行开发与测试: Dev 实现逻辑的同时 Tester 自动生成测试桩
+- **fix-all**: 自动纠偏总入口
 
 ---
 *Powered by Gemini CLI & QA Expert Framework.*

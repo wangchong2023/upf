@@ -17,12 +17,12 @@ type PfcpSession struct {
 // @Trace AR.UPF.001.01.001.01
 func HandleSessionEstablishment(seid uint64, nodeID string) (*PfcpSession, error) {
 	fmt.Printf("建立 PFCP 会话: SEID=%d, 来自节点: %s\n", seid, nodeID)
-	
+
 	session := &PfcpSession{
 		SEID:      seid,
 		NodeID:    nodeID,
 		CreatedAt: time.Now(),
 	}
-	
+
 	return session, nil
 }

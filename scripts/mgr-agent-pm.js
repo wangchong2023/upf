@@ -23,6 +23,7 @@ try {
     process.env.ACTIVE_ROLE = 'PM';
     execSync('node scripts/auto-req-sync.js', { stdio: 'inherit' });
     console.log("✅ [PM Agent] SRS and RTM updated successfully.");
+    console.log("   💡 ENHANCEMENT: Suggest calling activate_skill(name='agile-product-owner') to refine SR descriptions into INVEST-compliant user stories.");
 } catch (error) {
     console.error("❌ [PM Agent] Failed to update SRS/RTM.");
 }

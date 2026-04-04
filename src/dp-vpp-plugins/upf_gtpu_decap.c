@@ -1,5 +1,5 @@
-#include <vnet/vnet.h>
 #include <vnet/plugin/plugin.h>
+#include <vnet/vnet.h>
 #include <vpp/app/version.h>
 
 /**
@@ -8,12 +8,12 @@
  */
 
 typedef struct {
-    uint32_t teid;
-    ip4_address_t ue_ip;
+  uint32_t teid;
+  ip4_address_t ue_ip;
 } upf_gtpu_session_t;
 
-VNET_FEATURE_INIT (upf_gtpu_decap, static) = {
+VNET_FEATURE_INIT(upf_gtpu_decap, static) = {
     .arc_name = "device-input",
     .node_name = "upf-gtpu-decap",
-    .runs_before = VNET_FEATURES ("ethernet-input"),
+    .runs_before = VNET_FEATURES("ethernet-input"),
 };

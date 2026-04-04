@@ -68,7 +68,6 @@
 4. `mgr-git-ver` (版本管理) & `mgr-cicd-pipe` (流水线)。
 5. `mgr-obs-std` (可观测性) / `ops-sop-manual` (故障处理)。
 6. **`mgr-tech-review`** - 执行 **TR6 (发布决策评审)**。
-
 ## 角色化治理与 Agent 协同
 项目采用基于角色的门控系统 (`scripts/mgr-role-gate.js`)，确保操作的原子性与合规性：
 - **PM**: 负责项目的 **“统一管控”**，包括 SRS 生成、RTM 维护、主进度计划管理 (`agent-pm`) 及风险闭环。
@@ -81,7 +80,9 @@
 
 ---
 ### 质量红线
+- **代码物理纠偏**: 任何代码提交必须通过 `make fix-all` 自动格式化。`pre-commit` 钩子将物理拦截任何不符合 C/Go/JS 规范的源码入库。
 - **风险闭环管理**: 每次里程碑切换前必须刷新 `spec-risk-register.md`。任何状态为 **"Critical"** 的风险项未闭环前，TR 评审具有一票否决权。
+
 - **重构质量红线**: 大规模重构必须由 **ARCHITECT** 执行评审，重构后必须通过全量单元测试与 `make quality-gate` 审计。
 - **角色越权拦截**: 任何里程碑切换 (`stage-next`) 或决策通过 (`decision-pass`) 指令必须通过 **`MAINTAINER`** 角色的身份校验。
 - **流程变革管控**: 流程的变更必须在 **`mgr-qa-expert`** 的指导下进行，QA 负责对流程运作结果进行全量监控与定期审计。

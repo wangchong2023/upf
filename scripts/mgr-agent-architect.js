@@ -30,7 +30,9 @@ adrFiles.forEach(file => {
         const content = fs.readFileSync(path.join(adrPath, file), 'utf-8');
         const status = content.match(/Status:\s+(\w+)/i)?.[1];
         if (status === 'Proposed' || status === 'Draft') {
-            reviews.push(`[ADR_REVIEW] File ${file} has Status: ${status}. Automated review triggered.`);
+            reviews.push(`[ADR_REVIEW] File ${file} has Status: ${status}.`);
+            reviews.push(`   💡 ACTION: Please activate_skill(name="senior-architect") to review high-concurrency patterns.`);
+            reviews.push(`   💡 SECURITY: Please activate_skill(name="ai-security") to audit interface exposure.`);
         }
     }
 });

@@ -18,6 +18,8 @@ try {
     process.env.ACTIVE_ROLE = 'QA';
     execSync('make quality-gate', { stdio: 'inherit' });
     console.log("✅ [QA Agent] Quality-gate audit passed.");
+    console.log("   💡 DEEP_DIVE: Suggest calling activate_skill(name='code-reviewer') for idiomatic pattern checks.");
+    console.log("   💡 SKILL_AUDIT: Call activate_skill(name='skill-security-auditor') to scan custom governance scripts.");
 } catch (error) {
     console.error("❌ [QA Agent] Quality-gate audit failed.");
     process.exit(1);

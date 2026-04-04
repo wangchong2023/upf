@@ -1,20 +1,45 @@
 #!/bin/bash
-# .githooks/pre-commit: 提交前强制执行文档同步与一致性检查
+# .githooks/pre-commit: 物理拦截非合规代码提交 (全语言版)
 
-echo "Running Pre-commit Quality Gate: Documentation Sync & Check..."
+echo "🛡️  Starting Pre-commit Physical Guard: Specification Check & Auto-fix..."
 
-# 1. 尝试自动同步
-make doc-sync
+# 1. 执行自动纠偏 (格式化 C/Go/Scripts + 同步文档)
+make fix-all
 
-# 2. 运行一致性校验
-./scripts/auto-doc-check.sh
-
-RESULT=$?
-
+# 2. 强制审计 - 脚本规范 (JS/SH)
+make lint-scripts
 if [ $RESULT -ne 0 ]; then
-    echo "❌ [ERROR] Documentation consistency check failed!"
+    echo "❌ [BLOCKER] Script specification audit failed!"
     exit 1
 fi
 
-echo "✅ [SUCCESS] Documentation is synced and valid. Proceeding with commit..."
+# 3. 强制审计 - 文档一致性
+./scripts/auto-doc-check.sh
+if [ $RESULT -ne 0 ]; then
+    echo "❌ [BLOCKER] Documentation consistency check failed!"
+    exit 1
+fi
+
+# 4. 强制审计 - C 语言白盒 (静态扫描)
+# 仅在 src 目录下有变更时执行以提升提交速度
+if git diff --cached --name-only | grep -E "\.(c|h)$" > /dev/null; then
+    echo "🔍 Auditing C code changes..."
+    make lint-c
+    if [ $? -ne 0 ]; then
+        echo "❌ [BLOCKER] C code linting failed!"
+        exit 1
+    fi
+fi
+
+# 5. 强制审计 - Go 语言 (代码风格)
+if git diff --cached --name-only | grep -E "\.go$" > /dev/null; then
+    echo "🔍 Auditing Go code changes..."
+    make lint-go
+    if [ $? -ne 0 ]; then
+        echo "❌ [BLOCKER] Go code linting failed!"
+        exit 1
+    fi
+fi
+
+echo "✅ [SUCCESS] All physical guards passed. Proceeding with commit..."
 exit 0

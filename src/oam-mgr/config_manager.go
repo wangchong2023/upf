@@ -8,12 +8,12 @@ import "fmt"
  */
 
 type Config struct {
-    NodeID string
-    N4Addr string
+	NodeID string
+	N4Addr string
 }
 
 func ApplyConfig(cfg *Config) error {
-    fmt.Printf("Applying OAM Configuration for Node: %s\n", cfg.NodeID)
-    // 实现配置下发逻辑
-    return nil
+	fmt.Printf("Applying OAM Configuration for Node: %s\n", cfg.NodeID)
+	// 实现配置下发逻辑
+	return nil
 }
