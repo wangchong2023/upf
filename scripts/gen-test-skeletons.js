@@ -1,10 +1,18 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 /**
  * 测试用例骨架生成脚本 v1.0
  * 职责：根据 RTM 矩阵自动同步测试用例文档
  */
+
+// Role Gate Check
+try {
+    execSync('node scripts/mgr-role-gate.js --action=STUB_GEN', { stdio: 'inherit' });
+} catch (e) {
+    process.exit(1);
+}
 
 const rtmPath = 'docs/spec-rtm.md';
 const outputDir = 'docs/verification/test-cases';

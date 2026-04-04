@@ -35,13 +35,96 @@ oss-audit:
 trace-audit:
 	@node scripts/api-trace-audit.js
 
+# 变更与 RCR 同步审计
+rcr-audit:
+	@node scripts/git-to-rcr.js
+
+# 决策一键通过 (示例: make decision-pass STAGE=TR3 RESULT=Go)
+decision-pass:
+	@node scripts/mgr-role-gate.js --action=DECISION_PASS
+	@node scripts/mgr-decision-handler.js --stage=$(STAGE) --result=$(RESULT) --expert="$(EXPERT)"
+
+# 单元测试与覆盖率采集
+test-cov:
+	@node scripts/mgr-cov-runner.js
+
+# 流程扭转 (示例: make stage-next NEXT=TR4)
+stage-next:
+	@node scripts/mgr-role-gate.js --action=STAGE_TRANS
+	@echo $(NEXT) > .milestone
+	@echo "🚀 Milestone transitioned to $(NEXT)"
+
+# QA 独立审计
+qa-audit:
+	@node scripts/mgr-role-gate.js --action=QUALITY_AUDIT
+	@node scripts/mgr-qa-audit.js
+
+# 文档自动同步 (Doc-as-Code)
+doc-sync:
+	@node scripts/auto-doc-sync.js
+
+# 仪表盘自动刷新
+dashboard:
+	@node scripts/mgr-dashboard-refresh.js
+
+# 脚本规范审计
+lint-scripts:
+	@node scripts/mgr-script-audit.js
+
+# 构建多角色 Agent 系统
+# PM Agent: 自动生成需求矩阵、审计进度并触发下游调度
+agent-pm:
+	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-pm.js
+	@$(MAKE) agent-scheduler
+
+# 调度 Agent: 基于 RTM 承诺日期自动推导下游子任务计划
+agent-scheduler:
+	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-scheduler.js
+
+agent-se:
+	@export ACTIVE_ROLE=SE && export ACTIVE_TOKEN=a5a25ad952a66075 && node scripts/mgr-agent-se.js
+
+agent-architect:
+	@export ACTIVE_ROLE=ARCHITECT && export ACTIVE_TOKEN=786a9b7146bc1bf0 && node scripts/mgr-agent-architect.js
+
+agent-qa:
+	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=e4b8e49883e0defd && node scripts/mgr-agent-qa.js
+
+# 风险 Agent: 自动跟踪风险矩阵并生成预警
+agent-risk:
+	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=e4b8e49883e0defd && node scripts/mgr-agent-risk.js
+
+# 风险定期跟踪 (由 QA 角色触发)
+risk-track:
+	@node scripts/mgr-role-gate.js --action=QUALITY_AUDIT
+	@node scripts/mgr-agent-risk.js
+
+# 并行规划: 同步触发需求同步、分解与架构审计建议
+parallel-planning:
+	@echo "🚀 Starting parallel planning workflows (PM + SE + Architect)..."
+	@$(MAKE) -j3 agent-pm agent-se agent-architect
+
+# 并行开发与测试: Dev 实现逻辑的同时 Tester 自动生成测试桩
+parallel-dev-test:
+	@echo "🚀 Starting parallel Dev and Tester workflows..."
+	@$(MAKE) -j2 dev-work tester-work
+
+dev-work:
+	@export ACTIVE_ROLE=DEV && node scripts/api-trace-audit.js
+
+tester-work:
+	@export ACTIVE_ROLE=TESTER && node scripts/gen-test-skeletons.js
+
 # 质量门控总入口 (默认执行全量审计)
-quality-gate: auto-doc-check sync-reqs gen-test-cases sync-results
+quality-gate: doc-sync lint-scripts auto-doc-check sync-reqs gen-test-cases sync-results test-cov
+	@$(MAKE) qa-audit
+	@$(MAKE) rcr-audit
 	@$(MAKE) trace-audit
-	@$(MAKE) tr-audit STAGE=TR5
+	@$(MAKE) tr-audit
 	@$(MAKE) oss-audit
 	@$(MAKE) api-check
-	@echo "All quality gates passed!"
+	@$(MAKE) dashboard
+	@echo "All quality gates passed for stage: $$(cat .milestone)"
 
 
 # Go 语言检查

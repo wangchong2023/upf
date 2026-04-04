@@ -69,8 +69,22 @@
 5. `mgr-obs-std` (可观测性) / `ops-sop-manual` (故障处理)。
 6. **`mgr-tech-review`** - 执行 **TR6 (发布决策评审)**。
 
+## 角色化治理与 Agent 协同
+项目采用基于角色的门控系统 (`scripts/mgr-role-gate.js`)，确保操作的原子性与合规性：
+- **PM**: 负责项目的 **“统一管控”**，包括 SRS 生成、RTM 维护、主进度计划管理 (`agent-pm`) 及风险闭环。
+- **SE**: 负责需求分解、子系统接口定义及规格同步。
+- **ARCHITECT**: 负责架构决策 (ADR)、方案评审 (TR2/TR3) 及契约锁定。
+- **MAINTAINER**: 负责里程碑物理切换、决策结果回填及配置管理。
+- **QA**: 负责 AUDIT_SIGN, GATE_INTERCEPT, QUALITY_AUDIT 等核心治理任务。
+- **DEV**: 负责 CODE_TRACE, UNIT_TEST 等核心治理任务。
+- **TESTER**: 负责 IT_TEST, ST_TEST, RESULT_SYNC 等核心治理任务。
+
 ---
 ### 质量红线
+- **风险闭环管理**: 每次里程碑切换前必须刷新 `spec-risk-register.md`。任何状态为 **"Critical"** 的风险项未闭环前，TR 评审具有一票否决权。
+- **重构质量红线**: 大规模重构必须由 **ARCHITECT** 执行评审，重构后必须通过全量单元测试与 `make quality-gate` 审计。
+- **角色越权拦截**: 任何里程碑切换 (`stage-next`) 或决策通过 (`decision-pass`) 指令必须通过 **`MAINTAINER`** 角色的身份校验。
+- **流程变革管控**: 流程的变更必须在 **`mgr-qa-expert`** 的指导下进行，QA 负责对流程运作结果进行全量监控与定期审计。
 - **QA 独立审计**: 任何 TR 评审前，必须由 **`mgr-qa-expert`** 执行流程合规性审计。
 - **RTM 一致性**: 100% 的代码实现必须可回溯至 SRS 编号。
 - **TR 拦截**: 任何 TR 评审结论为 "No-Go" 或存在未闭环 QA Issue 时，禁止进入下一阶段。

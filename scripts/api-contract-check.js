@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 /**
  * API 契约验证脚本 v1.0
@@ -7,6 +8,13 @@ const path = require('path');
  */
 
 console.log("🔍 Starting API Contract Validation...");
+
+// Role Gate Check
+try {
+    execSync('node scripts/mgr-role-gate.js --action=API_LOCKED', { stdio: 'inherit' });
+} catch (e) {
+    process.exit(1);
+}
 
 const yamlPath = "docs/api/external/3gpp-n4.yaml";
 const srcPath = "src/cp-core/pfcp_session.h"; // 假设的 N4 核心结构体位置

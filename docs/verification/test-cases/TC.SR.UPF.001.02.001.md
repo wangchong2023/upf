@@ -23,3 +23,6 @@
 
 ---
 *Created via automation from RTM.*
+
+## 5. 错误信息
+- GTP-U extension header parsing mismatch: expected 0x01, got 0x00

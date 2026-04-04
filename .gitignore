@@ -3,3 +3,4 @@ dist/*.skill
 
 .gemini/
 gha-creds-*.json
+.role_secrets

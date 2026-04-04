@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 /**
  * @Trace 增强型双向审计脚本 v1.0
@@ -7,6 +8,13 @@ const path = require('path');
  */
 
 console.log("🕵️  Starting Bidirectional Traceability Audit (@Trace)...");
+
+// Role Gate Check
+try {
+    execSync('node scripts/mgr-role-gate.js --action=CODE_TRACE', { stdio: 'inherit' });
+} catch (e) {
+    process.exit(1);
+}
 
 const rtmPath = 'docs/spec-rtm.md';
 const srcDir = 'src';

@@ -1,10 +1,18 @@
 const fs = require('fs');
 const path = require('path');
+const { execSync } = require('child_process');
 
 /**
  * 测试结果自动化回填脚本 v1.0
  * 职责：解析测试执行结果，物理更新 RTM 矩阵与用例文档状态
  */
+
+// Role Gate Check
+try {
+    execSync('node scripts/mgr-role-gate.js --action=RESULT_SYNC', { stdio: 'inherit' });
+} catch (e) {
+    process.exit(1);
+}
 
 const rtmPath = 'docs/spec-rtm.md';
 const tcDir = 'docs/verification/test-cases';
@@ -73,7 +81,7 @@ function updateTCFiles(results) {
 }
 
 // 执行同步
-updateRTM(mockResults);
-updateTCFiles(mockResults);
+updateRTM(results);
+updateTCFiles(results);
 
 console.log("✨ Back-filling completed successfully.");

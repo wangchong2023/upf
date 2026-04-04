@@ -7,7 +7,7 @@
 | **TR1** | 2026-03-15 | **Go** | PM, QA | ✅ Closed | [tr1-report.md] |
 | **PDCP** | 2026-03-20 | **Go** | Executive Board | ✅ Closed | [N/A] |
 | **TR2** | 2026-04-01 | **Go with Conditions** | Architecture Team | 🟡 WIP | [tr2-report-001.md] |
-| **TR3** | TBD | **Pending** | - | ⚪️ Open | - |
+| **TR3** | 2026-04-04 | **Go** | Arch-Review-Board | ✅ Closed | [auto-report] | **Pending** | - | ⚪️ Open | - |
 
 ## 2. 决策遗留问题追踪 (Action Items)
 | Issue ID | 来源 | 描述 | 责任人 | 计划完成 | 状态 |
