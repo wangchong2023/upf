@@ -41,7 +41,7 @@ function updateREADME(targets) {
     // 生成指令列表 Markdown
     let cmdMarkdown = "## 🚀 关键指令\n";
     // 过滤出核心指令
-    const coreTargets = targets.filter(t => t.target.startsWith('agent-') || t.target.startsWith('parallel-') || t.target.startsWith('branch-') || t.target === 'quality-gate' || t.target === 'stage-next' || t.target === 'fix-all' || t.target === 'release' || t.target === 'changelog');
+    const coreTargets = targets.filter(t => t.target.startsWith('agent-') || t.target.startsWith('parallel-') || t.target.startsWith('branch-') || t.target === 'quality-gate' || t.target === 'stage-next' || t.target === 'fix-all' || t.target === 'release' || t.target === 'changelog' || t.target === 'backport' || t.target === 'release-report');
     
     coreTargets.forEach(t => {
         cmdMarkdown += `- **${t.target}**: ${t.desc}\n`;

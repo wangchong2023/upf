@@ -71,6 +71,8 @@
 - **branch-feature**: 分支管理: 创建特性开发分支 (示例: make branch-feature ID=001)
 - **branch-release**: 分支管理: 创建发布冻结分支 (示例: make branch-release VERSION=1.0.0)
 - **branch-hotfix**: 分支管理: 创建紧急热修分支 (示例: make branch-hotfix ID=001)
+- **backport**: 跨版本变更同步 (示例: make backport COMMIT=c0ffee)
+- **release-report**: 版本完备性报告 (TR6 准出物)
 - **fix-all**: 自动纠偏总入口
 
 ---

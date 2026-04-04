@@ -59,7 +59,14 @@
     - 重构前必须确保 100% 单元测试覆盖，重构后必须通过 `make quality-gate`。
     - 大规模重构 (涉及 5 个以上文件) 必须由 **ARCHITECT** 执行 TR2 架构评审。
 
-## 8. 质量准出 (Quality Gate)
+## 8. Git 与提交规约 (Git & Commit Standards)
+- **提交信息语言**: 所有的 Commit Message 必须采用 **中文** 编写。
+- **格式规范**: 必须遵循 `类型(模块): 描述` 格式（参考 Angular 规范）。
+    - 示例: `feat(治理): 实现自动化发布流水线`。
+- **关联性**: 每个提交必须物理关联一个需求编号（AR.xxx）或缺陷编号（IS.xxx）。
+- **分支原则**: 禁止直接向 `main` 分支提交代码，所有变更必须通过 PR 合入。
+
+## 9. 质量准出 (Quality Gate)
 - **TDD**: 先写失败的测试，再写实现代码。
 - **ASan**: `make quality-gate` 必须 0 内存错误。
 - **Linter**: `cppcheck`, `clang-tidy` 及 `mgr-script-audit` 必须 0 警告。
