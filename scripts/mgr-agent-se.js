@@ -1,13 +1,9 @@
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const args = process.argv.slice(2);
+const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
 
-/**
- * SE Agent v1.0
- * 职责：自动进行需求分解和子系统接口定义
- */
-
-console.log("🚀 [SE Agent] Starting requirement decomposition and interface definition...");
+console.log(`🚀 [SE Agent] Starting requirement decomposition ${targetVersion ? `for version ${targetVersion}` : 'for all versions'}...`);
 
 // Role Gate Check
 try {
@@ -26,10 +22,11 @@ if (!fs.existsSync(srsPath) || !fs.existsSync(rtmPath)) {
 }
 
 // 模拟需求分解逻辑
-const srsContent = fs.readFileSync(srsPath, 'utf-8');
-const srIds = srsContent.match(/SR\.UPF\.\d{3}\.\d{2}\.\d{3}/g) || [];
+const rtmContent = fs.readFileSync(rtmPath, 'utf-8');
+const lines = rtmContent.split('\n');
+const filteredLines = targetVersion ? lines.filter(l => l.includes(`[Target: ${targetVersion}]`)) : lines;
 
-console.log(`🔍 [SE Agent] Found ${srIds.length} System Requirements for decomposition.`);
+console.log(`🔍 [SE Agent] Found ${filteredLines.length} entries matching version filter.`);
 
 srIds.forEach(id => {
     // 为每个 SR 生成对应的 AR 编号

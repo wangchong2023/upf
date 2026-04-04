@@ -7,7 +7,10 @@ const { execSync } = require('child_process');
  * 职责：自动执行 ADR 决策评审
  */
 
-console.log("🚀 [Architect Agent] Starting ADR decision reviews...");
+const args = process.argv.slice(2);
+const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
+
+console.log(`🚀 [Architect Agent] Starting ADR decision reviews ${targetVersion ? `for version ${targetVersion}` : ''}...`);
 
 // Role Gate Check
 try {
@@ -28,6 +31,10 @@ const reviews = [];
 adrFiles.forEach(file => {
     if (file.endsWith('.md')) {
         const content = fs.readFileSync(path.join(adrPath, file), 'utf-8');
+        
+        // 过滤逻辑：如果指定了版本，且 ADR 内容中不包含该版本标识，则跳过
+        if (targetVersion && !content.includes(targetVersion)) return;
+
         const status = content.match(/Status:\s+(\w+)/i)?.[1];
         if (status === 'Proposed' || status === 'Draft') {
             reviews.push(`[ADR_REVIEW] File ${file} has Status: ${status}.`);

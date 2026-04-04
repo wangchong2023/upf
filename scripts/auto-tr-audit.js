@@ -44,9 +44,32 @@ let checks = [];
 // 0. 通用风险审计 (所有阶段强制检查 Critical 风险)
 function auditCriticalRisks() {
     if (fs.existsSync(paths.risk)) {
+        const args = process.argv.slice(2);
+        const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
+        
         const content = fs.readFileSync(paths.risk, 'utf-8');
-        const openCriticals = (content.match(/\| (高|Critical|High) \|.*\| (Open|In Progress) \|/g) || []).length;
-        logCheck("GLOBAL_RISK", openCriticals === 0, `Open Critical Risks: ${openCriticals}`, "Close all Critical/High risks in docs/spec-risk-register.md before milestone transition");
+        const lines = content.split('\n');
+        let openCriticals = 0;
+
+        lines.forEach(line => {
+            if (line.includes('| **RK.')) {
+                const parts = line.split('|').map(p => p.trim());
+                if (parts.length < 10) return;
+
+                const level = parts[3];
+                const version = parts[7];
+                const status = parts[9];
+
+                // 过滤逻辑：如果指定了版本且风险不属于该版本，则跳过
+                if (targetVersion && version !== targetVersion) return;
+
+                if ((level === '高' || level === 'Critical' || level === 'High') && (status === 'Open' || status === 'In Progress' || status === '**Open**')) {
+                    openCriticals++;
+                }
+            }
+        });
+
+        logCheck("GLOBAL_RISK", openCriticals === 0, `Open Critical Risks ${targetVersion ? `for ${targetVersion}` : ''}: ${openCriticals}`, "Close all Critical/High risks in docs/spec-risk-register.md before milestone transition");
         if (openCriticals > 0) exitCode = 1;
     }
 }

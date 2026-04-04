@@ -41,7 +41,7 @@ function updateREADME(targets) {
     // 生成指令列表 Markdown
     let cmdMarkdown = "## 🚀 关键指令\n";
     // 过滤出核心指令
-    const coreTargets = targets.filter(t => t.target.startsWith('agent-') || t.target.startsWith('parallel-') || t.target === 'quality-gate' || t.target === 'stage-next' || t.target === 'fix-all');
+    const coreTargets = targets.filter(t => t.target.startsWith('agent-') || t.target.startsWith('parallel-') || t.target === 'quality-gate' || t.target === 'stage-next' || t.target === 'fix-all' || t.target === 'release' || t.target === 'changelog');
     
     coreTargets.forEach(t => {
         cmdMarkdown += `- **${t.target}**: ${t.desc}\n`;
@@ -73,7 +73,7 @@ function updateGEMINI() {
         if (role === 'PM') desc = "负责项目的 **“统一管控”**，包括 SRS 生成、RTM 维护、主进度计划管理 (`agent-pm`) 及风险闭环。";
         if (role === 'SE') desc = "负责需求分解、子系统接口定义及规格同步。";
         if (role === 'ARCHITECT') desc = "负责架构决策 (ADR)、方案评审 (TR2/TR3) 及契约锁定。";
-        if (role === 'MAINTAINER') desc = "负责里程碑物理切换、决策结果回填及配置管理。";
+        if (role === 'MAINTAINER') desc = "负责里程碑物理切换、**版本定位与变更同步 (`mgr-version-mgmt`)** 及配置管理。";
         
         roleMarkdown += `- **${role}**: ${desc}\n`;
     }

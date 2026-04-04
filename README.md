@@ -58,6 +58,8 @@
 
 ## 🚀 关键指令
 - **stage-next**: 流程扭转 (示例: make stage-next NEXT=TR4)
+- **release**: 版本管理与发布 (示例: make release VERSION=v1.0.0)
+- **changelog**: 自动生成变更日志 (Changelog)
 - **agent-pm**: PM Agent: 自动生成需求矩阵、审计进度并触发下游调度
 - **agent-scheduler**: 调度 Agent: 基于 RTM 承诺日期自动推导下游子任务计划
 - **agent-se**: 自动执行治理任务

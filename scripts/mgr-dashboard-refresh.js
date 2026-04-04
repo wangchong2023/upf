@@ -32,10 +32,23 @@ try {
     const qaContent = getFileContent(paths.qa);
 
     const totalARCount = getCount(rtmContent, /\| \*\*RR\.UPF\./g);
+    
+    // 版本化统计
+    const getVersionStats = (v) => {
+        const vRtm = rtmContent.split('\n').filter(l => l.includes(`[Target: ${v}]`)).join('\n');
+        return {
+            total: getCount(vRtm, /\| \*\*RR\.UPF\./g),
+            done: getCount(vRtm, /✅ 已验证/g)
+        };
+    };
+
+    const statsV10 = getVersionStats('v1.0.0');
+    const statsV11 = getVersionStats('v1.1.0');
 
     const stats = {
         totalAR: totalARCount || 719,
         doneAR: getCount(rtmContent, /✅ 已验证/g),
+        // ... 其他保持不变
         failedAR: getCount(rtmContent, /❌ 验证失败/g),
         openBugs: getCount(qclmContent, /\| Open \|/g),
         qaHighRisks: getCount(qaContent, /\| 🔴 High/g),
@@ -81,8 +94,10 @@ try {
 
     finalDashboard += `## 1. 项目整体概貌 (Overall Health)\n`;
     finalDashboard += `| 维度 | 指标值 | 状态 | 备注 |\n| :--- | :--- | :--- | :--- |\n`;
-    finalDashboard += `| **需求进度** | ${stats.doneAR} / ${stats.totalAR} | ${(stats.doneAR / stats.totalAR * 100).toFixed(1)}% | 物理追溯已开启 |\n`;
+    finalDashboard += `| **需求进度 (v1.0.0)** | ${statsV10.done} / ${statsV10.total} | ${(statsV10.done / (statsV10.total || 1) * 100).toFixed(1)}% | 核心基线 |\n`;
+    finalDashboard += `| **需求进度 (v1.1.0)** | ${statsV11.done} / ${statsV11.total} | ${(statsV11.done / (statsV11.total || 1) * 100).toFixed(1)}% | 增强特性 |\n`;
     finalDashboard += `| **质量门控** | ${stats.openBugs === 0 ? "Passed" : "Blocked"} | ${stats.openBugs > 0 ? "🔴" : "🟢"} | 当前 Open 缺陷: ${stats.openBugs} |\n`;
+
     finalDashboard += `| **遗留问题** | ${stats.openActionItems} Items | ${stats.openActionItems > 0 ? "🟡" : "🟢"} | 含决策 AI 与风险项 |\n`;
     finalDashboard += `| **审计风险** | ${stats.qaHighRisks} High | ${stats.qaHighRisks > 0 ? "🔴" : "🟢"} | 由 QA Agent 自动产出 |\n\n`;
 

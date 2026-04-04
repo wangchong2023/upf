@@ -10,7 +10,10 @@ try {
     const RTM_PATH = 'docs/spec-rtm.md';
     const TASK_PLAN_PATH = 'docs/spec-downstream-tasks.md';
 
-    console.log("🚀 [Scheduler Agent] Deriving downstream task schedules from RTM...");
+    const args = process.argv.slice(2);
+    const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
+
+    console.log(`🚀 [Scheduler Agent] Deriving task schedules ${targetVersion ? `for version ${targetVersion}` : 'for all versions'}...`);
 
     if (!fs.existsSync(RTM_PATH)) {
         console.error("❌ RTM not found. Run agent-pm first.");
@@ -34,6 +37,9 @@ try {
         if (line.includes('| **SR.UPF.')) {
             const parts = line.split('|').map(p => p.trim());
             if (parts.length < 11) return;
+
+            // 过滤逻辑：如果指定了版本且行中不包含该版本标识，则跳过
+            if (targetVersion && !line.includes(`[Target: ${targetVersion}]`)) return;
 
             const srId = parts[3].replace(/\*\*/g, '');
             const arId = parts[4].replace(/\*\*/g, '');

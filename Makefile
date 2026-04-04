@@ -23,9 +23,9 @@ sync-results:
 	@node scripts/sync-test-results.js
 
 # TR 评审自动化审计 (支持 STAGE 参数，默认 GENERAL)
-# 使用示例: make tr-audit STAGE=TR3
+# 使用示例: make tr-audit STAGE=TR3 VERSION=v1.0.0
 tr-audit:
-	@node scripts/auto-tr-audit.js --stage=$(if $(STAGE),$(STAGE),GENERAL)
+	@node scripts/auto-tr-audit.js --stage=$(if $(STAGE),$(STAGE),GENERAL) --version=$(VERSION)
 
 # 开源合规审计 (SBOM & License)
 oss-audit:
@@ -57,11 +57,24 @@ stage-next:
 # QA 独立审计
 qa-audit:
 	@node scripts/mgr-role-gate.js --action=QUALITY_AUDIT
-	@node scripts/mgr-qa-audit.js
+	@node scripts/mgr-qa-audit.js --version=$(VERSION)
 
 # 文档自动同步 (Doc-as-Code)
 doc-sync:
 	@node scripts/auto-doc-sync.js
+
+# 版本管理与发布 (示例: make release VERSION=v1.0.0)
+release:
+	@node scripts/mgr-role-gate.js --action=STAGE_TRANS
+	@echo "🏷️  Tagging version $(VERSION)..."
+	@git tag -a $(VERSION) -m "Release $(VERSION)"
+	@git push origin $(VERSION)
+	@echo "🚀 Version $(VERSION) physical release completed."
+
+# 自动生成变更日志 (Changelog)
+changelog:
+	@echo "Generating changelog from git history..."
+	@git log --pretty=format:"* %s (%h)" > CHANGELOG.md
 
 # 仪表盘自动刷新
 dashboard:
@@ -77,18 +90,18 @@ lint-scripts:
 # 构建多角色 Agent 系统
 # PM Agent: 自动生成需求矩阵、审计进度并触发下游调度
 agent-pm:
-	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-pm.js
-	@$(MAKE) agent-scheduler
+	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-pm.js --version=$(VERSION)
+	@$(MAKE) agent-scheduler VERSION=$(VERSION)
 
 # 调度 Agent: 基于 RTM 承诺日期自动推导下游子任务计划
 agent-scheduler:
-	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-scheduler.js
+	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-scheduler.js --version=$(VERSION)
 
 agent-se:
-	@export ACTIVE_ROLE=SE && export ACTIVE_TOKEN=a5a25ad952a66075 && node scripts/mgr-agent-se.js
+	@export ACTIVE_ROLE=SE && export ACTIVE_TOKEN=a5a25ad952a66075 && node scripts/mgr-agent-se.js --version=$(VERSION)
 
 agent-architect:
-	@export ACTIVE_ROLE=ARCHITECT && export ACTIVE_TOKEN=786a9b7146bc1bf0 && node scripts/mgr-agent-architect.js
+	@export ACTIVE_ROLE=ARCHITECT && export ACTIVE_TOKEN=786a9b7146bc1bf0 && node scripts/mgr-agent-architect.js --version=$(VERSION)
 
 agent-qa:
 	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=e4b8e49883e0defd && node scripts/mgr-agent-qa.js
@@ -148,6 +161,16 @@ format-c:
 	@if [ -n "$(C_SRC)" ]; then clang-format -i $(C_SRC); fi
 
 lint-c: cppcheck clang-tidy test-asan
+
+# 分支管理 (示例: make branch-feature ID=001)
+branch-feature:
+	@node scripts/mgr-branch-mgmt.js --action=feature --name=$(ID)
+
+branch-release:
+	@node scripts/mgr-branch-mgmt.js --action=release --name=$(VERSION)
+
+branch-hotfix:
+	@node scripts/mgr-branch-mgmt.js --action=hotfix --name=$(ID)
 
 # 自动纠偏总入口
 fix-all: format-go format-c format-scripts doc-sync

@@ -3,12 +3,12 @@
 ## 1. 缺陷与流程偏差概览
 本矩阵记录了从 CR、Lint、QA 审计及测试中发现的所有不符合项。
 
-| Issue ID | 来源 | 类型 | 描述 | 关联需求 (AR/SR) | 状态 | 修复 Commit | 回归验证 |
-| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| **IS.GTPU.001** | 性能测试 | PERF | 百万级会话下 TEID Hash 冲突严重，导致转发时延超标。 | AR.UPF.001.02.001 | **Fixed** | c0ffee123 | 方案 A 已实施 |
-| **IS.QA.003** | QA 抽查 | **PROCESS** | 设计与实现严重脱节：pdr_match_key_t 核心结构在源码中缺失。 | RR.UPF.003 | **Closed** | PDR-SKELETON | 源码中已建立 pdr_match.h |
-| **IS.QA.001** | QA 审计 | PROCESS | 重大工程目录与命名体系重构缺失 RCR 变更单。 | N/A (工程治理) | **Closed** | RCR.002 | 已补录 RCR |
-| **IS.QA.002** | QA 审计 | **PROCESS** | SDS 方案缺失 DFMEA 可靠性分析初步结论。 | RR.UPF.003 | **Closed** | SDS-REFILL | 已回填 SDS |
+| Issue ID | 来源 | 类型 | 描述 | 关联需求 | 发现版本 | 修复版本 | 状态 | 修复 Commit |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **IS.GTPU.001** | 性能测试 | PERF | 百万级会话下 TEID Hash 冲突严重，导致转发时延超标。 | AR.001 | v1.0.0 | v1.0.1 | **Fixed** | c0ffee123 |
+| **IS.QA.003** | QA 抽查 | PROCESS | 设计与实现严重脱节：pdr_match_key_t 核心结构在源码中缺失。 | RR.003 | v1.0.0 | v1.0.0 | **Closed** | PDR-SKELETON |
+| **IS.QA.001** | QA 审计 | PROCESS | 重大工程目录与命名体系重构缺失 RCR 变更单。 | N/A | v1.0.0 | v1.0.0 | **Closed** | RCR.002 |
+| **IS.QA.002** | QA 审计 | PROCESS | SDS 方案缺失 DFMEA 可靠性分析初步结论。 | RR.003 | v1.0.0 | v1.0.0 | **Closed** | SDS-REFILL |
 | | | | | | | | |
 | | | | | | | | |
 

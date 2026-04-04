@@ -9,7 +9,10 @@ const { execSync } = require('child_process');
  * 3. 协调跨角色任务项的统一管控
  */
 
-console.log("🚀 [PM Agent] Starting unified project control & progress audit...");
+const args = process.argv.slice(2);
+const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
+
+console.log(`🚀 [PM Agent] Starting unified project control & progress audit ${targetVersion ? `for version ${targetVersion}` : ''}...`);
 
 // 1. Role Gate Check
 try {
@@ -33,7 +36,7 @@ function auditSchedule() {
     const planPath = 'docs/spec-project-plan.md';
     if (!fs.existsSync(planPath)) return;
 
-    console.log("🔍 [PM Agent] Auditing Master Schedule...");
+    console.log(`🔍 [PM Agent] Auditing Master Schedule ${targetVersion ? `(Filtered by ${targetVersion})` : ''}...`);
     const content = fs.readFileSync(planPath, 'utf-8');
     const lines = content.split('\n');
     const today = new Date();
@@ -45,8 +48,11 @@ function auditSchedule() {
             if (parts.length < 6) return;
 
             const milestone = parts[1];
+            // 简单逻辑：如果指定了版本，且里程碑描述中不包含该版本（如 v1.0.0 相关里程碑），则跳过
+            // 这里我们假设里程碑与版本计划文档中的关联关系
+            if (targetVersion && !line.includes(targetVersion) && !milestone.includes('CDCP') && !milestone.includes('PDCP')) return;
+
             const planDate = new Date(parts[3]);
-            const actualDate = parts[4];
             const status = parts[5];
 
             // 检查延期：状态不是 Done 且当前日期已超过计划日期

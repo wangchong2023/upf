@@ -57,6 +57,9 @@ function auditTestRealism() {
 // 3. 风险矩阵审计 (检查 Critical 风险与超期风险)
 function auditRiskMatrix() {
     if (fs.existsSync(paths.riskMatrix)) {
+        const args = process.argv.slice(2);
+        const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
+        
         const content = fs.readFileSync(paths.riskMatrix, 'utf-8');
         const lines = content.split('\n');
         const today = new Date();
@@ -64,21 +67,25 @@ function auditRiskMatrix() {
         lines.forEach(line => {
             if (line.includes('| **RK.')) {
                 const parts = line.split('|').map(p => p.trim());
-                if (parts.length < 9) return;
+                if (parts.length < 10) return;
                 
                 const riskId = parts[1];
                 const level = parts[3];
-                const targetDate = new Date(parts[7]);
-                const status = parts[8];
+                const version = parts[7];
+                const targetDate = new Date(parts[8]);
+                const status = parts[9];
+
+                // 过滤逻辑：如果指定了版本且风险不属于该版本，则跳过
+                if (targetVersion && version !== targetVersion) return;
 
                 if (level === '高' || level === 'Critical' || level === 'High') {
                     if (status !== '**Closed**' && status !== 'Closed') {
-                        qaIssues.push(`[CRITICAL_RISK] ${riskId} is ${level} and still ${status}.`);
+                        qaIssues.push(`[CRITICAL_RISK] ${riskId} (${version}) is ${level} and still ${status}.`);
                     }
                 }
 
-                if (status !== '**Closed**' && status !== 'Closed' && targetDate < today && parts[7] !== '') {
-                    qaIssues.push(`[RISK_OVERDUE] ${riskId} has passed its target closure date (${parts[7]}).`);
+                if (status !== '**Closed**' && status !== 'Closed' && targetDate < today && parts[8] !== '') {
+                    qaIssues.push(`[RISK_OVERDUE] ${riskId} (${version}) has passed its target closure date (${parts[8]}).`);
                 }
             }
         });
