@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -16,7 +21,7 @@ try {
     process.exit(1);
 }
 
-const yamlPath = "docs/api/external/3gpp-n4.yaml";
+const yamlPath = "docs/02-design/api/external/3gpp-n4.yaml";
 const srcPath = "src/cp-core/pfcp_session.h"; // 假设的 N4 核心结构体位置
 
 if (!fs.existsSync(yamlPath)) {

@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -19,7 +24,7 @@ try {
     process.exit(1);
 }
 
-const adrPath = 'docs/arch/adr/';
+const adrPath = 'docs/02-design/arch/adr/';
 if (!fs.existsSync(adrPath)) {
     console.error("❌ [Architect Agent] ADR path missing.");
     process.exit(1);

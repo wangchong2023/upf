@@ -15,14 +15,81 @@ try {
     const SCRIPT_DIR = 'scripts';
     const rules = {
         "HEADER_COMMENT": {
-            check: (content) => content.includes('/**') || content.startsWith('#!/bin/bash'),
+            check: (content) => content.includes('@职责') || content.startsWith('#!/bin/bash'),
             fix: (content, filename) => {
                 if (filename.endsWith('.js')) {
                     return `/**\n * @职责: 自动补齐的治理脚本\n * @版本: v1.0\n */\n\n${content}`;
                 }
-                return content; // Shell 自动修复较复杂，暂不处理
+                return content; 
             },
-            message: "Missing mandatory JSDoc header or shebang."
+            message: "Missing mandatory JSDoc header with @职责 or shebang."
+        },
+        "FUNCTION_JSDOC": {
+            check: (content, filename) => {
+                if (filename.endsWith('.sh') || filename === 'mgr-script-audit.js') return true;
+                
+                // Also check for redundant JSDoc blocks
+                const redundantPattern = /(\/\*\*[\s\S]*?@职责: 自动补齐的治理函数[\s\S]*?\*\/[ \t]*\r?\n?){2,}/g;
+                if (redundantPattern.test(content)) return false;
+
+                const functions = content.match(/(async\s+)?function\s+\w+|const\s+\w+\s*=\s*\([^)]*\)\s*=>/g) || [];
+                for (const func of functions) {
+                    const funcName = func.includes('function') ? func.split(/\s+/).pop() : func.match(/const\s+(\w+)/)[1];
+                    if (funcName === 'auditScripts') continue; 
+                    
+                    const lines = content.split('\n');
+                    const funcLineIndex = lines.findIndex(l => l.includes(func));
+                    if (funcLineIndex <= 0) continue;
+                    
+                    let hasJSDoc = false;
+                    for (let i = funcLineIndex - 1; i >= Math.max(0, funcLineIndex - 5); i--) {
+                        if (lines[i].includes('*/')) {
+                            hasJSDoc = true;
+                            break;
+                        }
+                    }
+                    if (!hasJSDoc) return false;
+                }
+                return true;
+            },
+            fix: (content, filename) => {
+                if (filename.endsWith('.sh') || filename === 'mgr-script-audit.js') return content;
+                
+                let newContent = content;
+                
+                // Improved redundant pattern removal
+                const redundantPattern = /(\/\*\*[\s\S]*?@职责: 自动补齐的治理函数[\s\S]*?\*\/[ \t]*\r?\n?){2,}/g;
+                newContent = newContent.replace(redundantPattern, (match) => {
+                    const parts = match.split(/\/\*\*/);
+                    return '/**' + parts[1];
+                });
+
+                const functions = newContent.match(/(async\s+)?function\s+\w+|const\s+\w+\s*=\s*\([^)]*\)\s*=>/g) || [];
+                functions.forEach(func => {
+                    const funcName = func.includes('function') ? func.split(/\s+/).pop() : func.match(/const\s+(\w+)/)[1];
+                    if (funcName === 'auditScripts') return;
+                    
+                    const lines = newContent.split('\n');
+                    const funcLineIndex = lines.findIndex(l => l.includes(func));
+                    
+                    let hasJSDoc = false;
+                    if (funcLineIndex > 0) {
+                        for (let i = funcLineIndex - 1; i >= Math.max(0, funcLineIndex - 5); i--) {
+                            if (lines[i].includes('*/')) {
+                                hasJSDoc = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (!hasJSDoc) {
+                        const target = func;
+                        newContent = newContent.replace(target, `/**\n * @职责: 自动补齐的治理函数\n */\n${target}`);
+                    }
+                });
+                return newContent;
+            },
+            message: "Missing or redundant JSDoc documentation for function definitions."
         },
         "NO_EVAL": {
             check: (content, filename) => {

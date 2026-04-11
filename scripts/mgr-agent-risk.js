@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const { execSync } = require('child_process');
 
 /**
@@ -20,7 +25,7 @@ try {
     const cmd = targetVersion ? `make qa-audit VERSION=${targetVersion}` : 'make qa-audit';
     execSync(cmd, { stdio: 'inherit' });
     
-    console.log("✅ [Risk Agent] Risk tracking completed. Please review docs/verification/qa-audit-log.md for alerts.");
+    console.log("✅ [Risk Agent] Risk tracking completed. Please review docs/05-quality/verification/qa-audit-log.md for alerts.");
 } catch (error) {
     console.error("❌ [Risk Agent] Risk tracking failed. High risks or overdue items detected.");
     process.exit(1);

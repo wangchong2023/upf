@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -14,9 +19,9 @@ try {
     process.exit(1);
 }
 
-const rtmPath = 'docs/spec-rtm.md';
-const outputDir = 'docs/verification/test-cases';
-const templatePath = 'docs/verification/test-case-template.md';
+const rtmPath = 'docs/03-traceability/spec-rtm.md';
+const outputDir = 'docs/05-quality/verification/test-cases';
+const templatePath = 'docs/05-quality/verification/test-case-template.md';
 
 console.log("🚀 Syncing test case skeletons with RTM...");
 

@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
@@ -19,7 +24,7 @@ const stage = args.find(a => a.startsWith('--stage='))?.split('=')[1];
 const result = args.find(a => a.startsWith('--result='))?.split('=')[1];
 const expert = args.find(a => a.startsWith('--expert='))?.split('=')[1] || "TBD";
 
-const logPath = 'docs/spec-decision-log.md';
+const logPath = 'docs/04-management/spec-decision-log.md';
 
 if (!stage || !result) {
     console.error("❌ Usage: node mgr-decision-handler.js --stage=<Stage> --result=<Go/No-Go> [--expert=<Name>]");

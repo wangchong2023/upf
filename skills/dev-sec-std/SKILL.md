@@ -15,9 +15,22 @@ description: 保障产品安全基线
 3. **成果验证**: 使用 `quality-gate` 检查实施效果，确保不引入回归。
 
 ## 质量闭环 (Quality Closed-Loop)
-- **发现**: 任何评审、扫描或测试发现的缺陷必须记录至 `docs/verification/issue-review-traceability-matrix.md` (IRTM)。
+- **发现**: 任何评审、扫描或测试发现的缺陷必须记录至 `docs/05-quality/verification/issue-review-traceability-matrix.md` (IRTM)。
 - **修复**: 修复代码后必须编写或更新回归测试用例，并在 IRTM 中填入修复 Commit ID。
 - **验证**: 确保关联的 Issue 状态更新为 **Closed** 后，方可触发质量门控。
+
+
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- src/**/*.c
+- src/**/*.go
+- docs/05-quality/spec-coding-standards.md
+- **质量门限 (Quality Gate)**:
+- 80% unit test coverage
+- 0 lint errors
+- No memory leaks (Valgrind/ASan)
+- **挂载里程碑 (Milestone)**: TR4
+- **评审角色 (Reviewer)**: DEV
 
 ## 参考资源
 - [详细指南与模板](references/guide.md)

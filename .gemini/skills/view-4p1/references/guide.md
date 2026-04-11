@@ -27,4 +27,4 @@
 - **开发视图**：展示 VPP 插件架构、共享内存池 (Memory Pool) 设计。
 - **进程视图**：展示 DPDK 线程模型 (Master/Worker Threading) 与无锁队列通讯。
 
-详情参考 `docs/arch/views/` 下的模板。
+详情参考 `docs/02-design/arch/views/` 下的模板。

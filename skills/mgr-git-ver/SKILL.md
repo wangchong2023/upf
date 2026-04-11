@@ -14,6 +14,17 @@ description: 规范代码管理与协作流程
    - 在实施过程中，保持与架构决策 (ADR) 的一致性。
 3. **成果验证**: 使用 `quality-gate` 检查实施效果，确保不引入回归。
 
+
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- docs/04-management/spec-version-plan.md
+- scripts/mgr-*.js
+- **质量门限 (Quality Gate)**:
+- 100% configuration consistency
+- 0 deployment failures
+- **挂载里程碑 (Milestone)**: TR6
+- **评审角色 (Reviewer)**: PM
+
 ## 参考资源
 - [详细指南与模板](references/guide.md)
 - [执行地图 (GEMINI.md)](../../GEMINI.md)

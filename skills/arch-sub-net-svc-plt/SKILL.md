@@ -14,6 +14,19 @@ description: 承载 IP/数通层面的网络业务逻辑
    - 在实施过程中，保持与架构决策 (ADR) 的一致性。
 3. **成果验证**: 使用 `quality-gate` 检查实施效果，确保不引入回归。
 
+
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- docs/02-design/arch/adr/*.md
+- docs/02-design/spec-sds.md
+- docs/02-design/arch/views/*.md
+- **质量门限 (Quality Gate)**:
+- <10ms P99 latency
+- >100Gbps throughput
+- 100% ADR coverage
+- **挂载里程碑 (Milestone)**: TR2/TR3
+- **评审角色 (Reviewer)**: ARCHITECT
+
 ## 参考资源
 - [详细指南与模板](references/guide.md)
 - [执行地图 (GEMINI.md)](../../GEMINI.md)

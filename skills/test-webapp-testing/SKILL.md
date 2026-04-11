@@ -2,6 +2,18 @@
 name: webapp-testing
 description: Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.
 license: Complete terms in LICENSE.txt
+
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- test/**/*.go
+- docs/05-quality/verification/test-results.json
+- **质量门限 (Quality Gate)**:
+- 100% test pass rate
+- 80% code coverage
+- 0 regression issues
+- **挂载里程碑 (Milestone)**: TR5
+- **评审角色 (Reviewer)**: TESTER
+
 ---
 
 # Web Application Testing

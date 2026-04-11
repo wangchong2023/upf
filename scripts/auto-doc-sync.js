@@ -1,40 +1,50 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 
+const README = path.join(__dirname, '..', 'README.md');
+const GEMINI = path.join(__dirname, '..', 'GEMINI.md');
+
 /**
- * 自动化文档同步脚本 (Doc-as-Code)
- * 职责：解析 Makefile 与角色配置，强制同步 README.md 与 GEMINI.md
+ * @职责: 提取 Makefile 中的指令及其注释
  */
-
-const Makefile = 'Makefile';
-const README = 'README.md';
-const GEMINI = 'GEMINI.md';
-
-console.log("🔄 Starting Doc-as-Code Synchronization...");
-
-// 1. 提取 Makefile 中的关键指令及其描述 (支持简单注释解析)
 function extractMakefileTargets() {
-    const content = fs.readFileSync(Makefile, 'utf-8');
+    const makefilePath = path.join(__dirname, '..', 'Makefile');
+    const content = fs.readFileSync(makefilePath, 'utf-8');
     const lines = content.split('\n');
     const targets = [];
-    let currentDesc = "";
+    let lastComment = "";
 
     for (let i = 0; i < lines.length; i++) {
         const line = lines[i].trim();
-        if (line.startsWith('# ')) {
-            currentDesc = line.substring(2).trim();
-        } else if (line.includes(':') && !line.startsWith('.') && !line.startsWith('\t')) {
-            const target = line.split(':')[0].trim();
-            if (target && !target.includes('$') && target !== 'quality-gate' && target !== 'lint-go' && target !== 'lint-c') {
-                targets.push({ target, desc: currentDesc || "自动执行治理任务" });
-                currentDesc = ""; // Reset after use
+        if (line.startsWith('#')) {
+            // 累加注释
+            const comment = line.substring(1).trim();
+            if (lastComment) {
+                lastComment += " " + comment;
+            } else {
+                lastComment = comment;
             }
+        } else if (line.includes(':') && !line.startsWith('.') && !line.startsWith('\t') && !line.startsWith('@')) {
+            const target = line.split(':')[0].trim();
+            if (target && !target.includes('=') && !target.includes('$')) {
+                targets.push({ target, desc: lastComment || "执行 " + target + " 指令" });
+                lastComment = "";
+            }
+        } else if (line === "") {
+            lastComment = "";
         }
     }
     return targets;
 }
 
-// 2. 更新 README.md 中的指令部分
+/**
+ * @职责: 自动补齐的治理函数
+ */
 function updateREADME(targets) {
     let content = fs.readFileSync(README, 'utf-8');
     
@@ -56,6 +66,9 @@ function updateREADME(targets) {
 }
 
 // 3. 更新 GEMINI.md 中的角色定义部分 (基于 mgr-role-gate.js 的配置)
+/**
+ * @职责: 自动补齐的治理函数
+ */
 function updateGEMINI() {
     const roleGateContent = fs.readFileSync('scripts/mgr-role-gate.js', 'utf-8');
     const rolesMatch = roleGateContent.match(/const ROLES = (\{[\s\S]*?\});/);
@@ -73,7 +86,7 @@ function updateGEMINI() {
         if (role === 'PM') desc = "负责项目的 **“统一管控”**，包括 SRS 生成、RTM 维护、主进度计划管理 (`agent-pm`) 及风险闭环。";
         if (role === 'SE') desc = "负责需求分解、子系统接口定义及规格同步。";
         if (role === 'ARCHITECT') desc = "负责架构决策 (ADR)、方案评审 (TR2/TR3) 及契约锁定。";
-        if (role === 'MAINTAINER') desc = "负责里程碑物理切换、**版本定位与变更同步 (`mgr-version-mgmt`)** 及配置管理。";
+        if (role === 'MAINTAINER') desc = "负责里程碑物理切换、**版本定位与变更同步 (`mgr-ipd-release`)** 及配置管理。";
         
         roleMarkdown += `- **${role}**: ${desc}\n`;
     }

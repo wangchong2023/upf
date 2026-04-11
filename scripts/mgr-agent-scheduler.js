@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -7,8 +12,8 @@ const path = require('path');
  */
 
 try {
-    const RTM_PATH = 'docs/spec-rtm.md';
-    const TASK_PLAN_PATH = 'docs/spec-downstream-tasks.md';
+    const RTM_PATH = 'docs/03-traceability/spec-rtm.md';
+    const TASK_PLAN_PATH = 'docs/04-management/spec-downstream-tasks.md';
 
     const args = process.argv.slice(2);
     const targetVersion = args.find(a => a.startsWith('--version='))?.split('=')[1];
@@ -49,7 +54,10 @@ try {
 
             if (isNaN(targetDate.getTime())) return;
 
-            const calculateDeadline = (days) => {
+            /**
+ * @职责: 自动补齐的治理函数
+ */
+const calculateDeadline = (days) => {
                 const d = new Date(targetDate.getTime() - (days * 24 * 60 * 60 * 1000));
                 return d.toISOString().split('T')[0];
             };

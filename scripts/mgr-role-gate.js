@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const crypto = require('crypto');
 
@@ -8,12 +13,13 @@ const crypto = require('crypto');
 
 try {
     const ROLES = {
-        PM: ["RAT_ACCEPT", "DCP_APPROVE", "REQ_CHANGE", "SRS_GEN", "RTM_MAINTAIN", "PLAN_MANAGE"],
+        PM: ["SCHEDULE_AUDIT", "RISK_TRACK", "RAT_ACCEPT", "DCP_APPROVE", "REQ_CHANGE", "SRS_GEN", "RTM_MAINTAIN", "PLAN_MANAGE"],
+        PRODUCT: ["CHARTER_LOCK", "DCP_PASS", "GTM_AUDIT"],
         SE: ["REQ_DECOMP", "INTF_DEF", "SRS_GEN", "RTM_MAINTAIN"],
         ARCHITECT: ["TR_APPROVE", "API_LOCKED", "HLD_CHANGE", "ADR_REVIEW"],
         MAINTAINER: ["STAGE_TRANS", "DECISION_PASS", "HOTFIX_APPROVE", "CONFIG_MANAGE"],
-        QA: ["AUDIT_SIGN", "GATE_INTERCEPT", "QUALITY_AUDIT"],
-        DEV: ["CODE_TRACE", "UNIT_TEST"],
+        QA: ["AUDIT_SIGN", "GATE_INTERCEPT", "QUALITY_AUDIT", "STUB_GEN", "RESULT_SYNC", "UNIT_TEST", "API_LOCKED", "CODE_TRACE"],
+        DEV: ["CODE_TRACE", "UNIT_TEST", "MEM_AUDIT"],
         TESTER: ["IT_TEST", "ST_TEST", "RESULT_SYNC", "STUB_GEN"]
     };
 
@@ -34,7 +40,10 @@ try {
 
     // 简单的 Token 校验逻辑 (模拟身份认证)
     // Token 生成逻辑：HMAC_SHA256(Role, Secret)
-    const verifyToken = (role, token) => {
+    /**
+ * @职责: 自动补齐的治理函数
+ */
+const verifyToken = (role, token) => {
         if (role === 'GUEST') return false;
         const expected = crypto.createHmac('sha256', SYSTEM_SECRET).update(role.toUpperCase()).digest('hex').substring(0, 16);
         return token === expected;

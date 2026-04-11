@@ -324,6 +324,19 @@ Ask what Reader Claude got wrong or struggled with. Indicate intention to fix th
 
 Loop back to refinement for any problematic sections.
 
+
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- docs/01-requirements/spec-srs.md
+- docs/03-traceability/spec-rtm.md
+- docs/03-traceability/spec-rat.md
+- **质量门限 (Quality Gate)**:
+- 100% requirement traceability
+- 100% 3GPP mapping
+- 0 document errors
+- **挂载里程碑 (Milestone)**: TR1
+- **评审角色 (Reviewer)**: SE
+
 ---
 
 ### Exit Condition (Both Approaches)

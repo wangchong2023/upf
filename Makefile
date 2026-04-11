@@ -64,6 +64,7 @@ doc-sync:
 	@node scripts/auto-doc-sync.js
 
 # 版本管理与发布 (示例: make release VERSION=v1.0.0)
+# 相关 Skill: mgr-ipd-release
 release:
 	@node scripts/mgr-role-gate.js --action=STAGE_TRANS
 	@echo "🏷️  Tagging version $(VERSION)..."
@@ -79,6 +80,14 @@ changelog:
 # 仪表盘自动刷新
 dashboard:
 	@node scripts/mgr-dashboard-refresh.js
+
+# IPD Agent 编排总入口 (Autopilot)
+ipd-run:
+	@node scripts/mgr-agent-orchestrator.js --version=$(if $(VERSION),$(VERSION),v1.0.0)
+
+# IPD 全生命周期干跑仿真 (Dry-run)
+flow-dryrun:
+	@node scripts/flow-dryrun.js
 
 # 脚本规范审计与修复
 format-scripts:
@@ -103,8 +112,17 @@ agent-se:
 agent-architect:
 	@export ACTIVE_ROLE=ARCHITECT && export ACTIVE_TOKEN=786a9b7146bc1bf0 && node scripts/mgr-agent-architect.js --version=$(VERSION)
 
+agent-product:
+	@export ACTIVE_ROLE=PRODUCT && export ACTIVE_TOKEN=dfe7551bc1f75f35 && node scripts/mgr-agent-product.js --version=$(VERSION)
+
 agent-qa:
 	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=e4b8e49883e0defd && node scripts/mgr-agent-qa.js
+
+agent-dev:
+	@export ACTIVE_ROLE=DEV && export ACTIVE_TOKEN=0af963e78ef93a9d && node scripts/mgr-agent-dev.js
+
+agent-tester:
+	@export ACTIVE_ROLE=TESTER && export ACTIVE_TOKEN=502e02404ee169fe && node scripts/mgr-agent-tester.js
 
 # 风险 Agent: 自动跟踪风险矩阵并生成预警
 agent-risk:
@@ -117,8 +135,8 @@ risk-track:
 
 # 并行规划: 同步触发需求同步、分解与架构审计建议
 parallel-planning:
-	@echo "🚀 Starting parallel planning workflows (PM + SE + Architect)..."
-	@$(MAKE) -j3 agent-pm agent-se agent-architect
+	@echo "🚀 Starting parallel planning workflows (PRODUCT + PM + SE + Architect)..."
+	@$(MAKE) -j4 agent-product agent-pm agent-se agent-architect
 
 # 并行开发与测试: Dev 实现逻辑的同时 Tester 自动生成测试桩
 parallel-dev-test:
@@ -202,6 +220,7 @@ backport:
 	@$(MAKE) quality-gate
 
 # 版本完备性报告 (TR6 准出物)
+# 相关 Skill: mgr-ipd-release
 release-report:
 	@echo "📊 Generating Final Release Integrity Report for $(VERSION)..."
 	@mkdir -p dist/reports
@@ -211,10 +230,10 @@ release-report:
 	@echo "- **Release Tag**: $(VERSION)" >> dist/reports/integrity.md
 	@echo "- **Build Time**: $$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> dist/reports/integrity.md
 	@echo "## 2. Requirement Coverage" >> dist/reports/integrity.md
-	@echo "- Total Requirements: $$(grep -c "| \*\*RR.UPF." docs/spec-rtm.md)" >> dist/reports/integrity.md
-	@echo "- Verified: $$(grep -c "✅" docs/spec-rtm.md)" >> dist/reports/integrity.md
+	@echo "- Total Requirements: $$(grep -c "| \*\*RR.UPF." docs/03-traceability/spec-rtm.md)" >> dist/reports/integrity.md
+	@echo "- Verified: $$(grep -c "✅" docs/03-traceability/spec-rtm.md)" >> dist/reports/integrity.md
 	@echo "## 3. Open Issues" >> dist/reports/integrity.md
-	@echo "- Count: $$(grep -c "Open" docs/spec-qclm.md)" >> dist/reports/integrity.md
+	@echo "- Count: $$(grep -c "Open" docs/05-quality/spec-qclm.md)" >> dist/reports/integrity.md
 	@echo "✅ Report generated at dist/reports/integrity.md"
 
 # 自动纠偏总入口

@@ -14,6 +14,17 @@ description: 指导生产环境运维与故障处理
    - 在实施过程中，保持与架构决策 (ADR) 的一致性。
 3. **成果验证**: 使用 `quality-gate` 检查实施效果，确保不引入回归。
 
+
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- docs/ops-sop-manual.md
+- scripts/ops/*.sh
+- **质量门限 (Quality Gate)**:
+- MTTR < 30min
+- 100% operation success rate
+- **挂载里程碑 (Milestone)**: TR6
+- **评审角色 (Reviewer)**: QA
+
 ## 参考资源
 - [详细指南与模板](references/guide.md)
 - [执行地图 (GEMINI.md)](../../GEMINI.md)

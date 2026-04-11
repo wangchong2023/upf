@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const path = require('path');
 
@@ -9,14 +14,17 @@ const path = require('path');
 try {
     console.log("🛡️  Starting Production-Grade OSS Compliance Audit...");
 
-    const reportPath = "docs/verification/oss-compliance-report.md";
+    const reportPath = "docs/05-quality/verification/oss-compliance-report.md";
     const POLICY = {
         BLOCK: ["GPL-3.0", "AGPL-3.0", "GPLv3", "AGPL", "LGPL-3.0"],
         WARNING: ["GPL-2.0", "LGPL-2.1"]
     };
 
     // 1. 尝试探测依赖源
-    const getDependencies = () => {
+    /**
+ * @职责: 自动补齐的治理函数
+ */
+const getDependencies = () => {
         let deps = [];
         if (fs.existsSync('go.mod')) {
             console.log("📦 Detected go.mod, parsing dependencies...");

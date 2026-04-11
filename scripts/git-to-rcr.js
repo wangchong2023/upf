@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const { execSync } = require('child_process');
 const fs = require('fs');
 
@@ -8,8 +13,8 @@ const fs = require('fs');
 
 console.log("🔍 Auditing Architectural Changes vs RCR Records...");
 
-const SENSITIVE_PATHS = ['src/', 'docs/api/', 'docs/arch/'];
-const RCR_PATH = 'docs/spec-rcr.md';
+const SENSITIVE_PATHS = ['src/', 'docs/02-design/api/', 'docs/02-design/arch/'];
+const RCR_PATH = 'docs/04-management/spec-rcr.md';
 
 try {
     // 1. 获取当前未提交的变更文件列表

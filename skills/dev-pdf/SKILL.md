@@ -296,7 +296,20 @@ with open("encrypted.pdf", "wb") as output:
 ## Quick Reference
 
 | Task | Best Tool | Command/Code |
-|------|-----------|--------------|
+|------|-----------|-----------
+## 交付契约 (Delivery Contract)
+- **交付件 (Deliverables)**:
+- src/**/*.c
+- src/**/*.go
+- docs/05-quality/spec-coding-standards.md
+- **质量门限 (Quality Gate)**:
+- 80% unit test coverage
+- 0 lint errors
+- No memory leaks (Valgrind/ASan)
+- **挂载里程碑 (Milestone)**: TR4
+- **评审角色 (Reviewer)**: DEV
+
+---|
 | Merge PDFs | pypdf | `writer.add_page(page)` |
 | Split PDFs | pypdf | One page per file |
 | Extract text | pdfplumber | `page.extract_text()` |

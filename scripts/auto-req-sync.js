@@ -1,3 +1,8 @@
+/**
+ * @职责: 自动补齐的治理脚本
+ * @版本: v1.0
+ */
+
 const fs = require('fs');
 const { execSync } = require('child_process');
 
@@ -13,7 +18,7 @@ try {
     process.exit(1);
 }
 
-const content = fs.readFileSync('docs/spec-feature-list.md', 'utf-8');
+const content = fs.readFileSync('docs/01-requirements/spec-feature-list.md', 'utf-8');
 const lines = content.split('\n');
 
 let rrList = [];
@@ -96,7 +101,7 @@ Object.keys(versionedData).forEach(v => {
     specContent += `### RR (Raw Requirement)\n| 编号 | 来源 | 描述 | 优先级 |\n| :--- | :--- | :--- | :--- |\n${versionedData[v].rr.join('\n')}\n\n`;
     specContent += `### SR (System Requirement)\n| 编号 | 关联 IR | 类型 | 规格详述 | 协议遵循 |\n| :--- | :--- | :--- | :--- | :--- |\n${versionedData[v].sr.join('\n')}\n\n`;
 });
-fs.writeFileSync('docs/spec-srs.md', specContent);
+fs.writeFileSync('docs/01-requirements/spec-srs.md', specContent);
 
 // 生成物理隔离的 RTM
 let rtmContent = `# 5G UPF 功能全链路追踪矩阵 (RTM - Version Partitioned)\n\n`;
@@ -104,7 +109,7 @@ Object.keys(versionedData).forEach(v => {
     rtmContent += `## 🎯 Release Target: ${v}\n`;
     rtmContent += `| RR ID | IR ID | SR ID | AR ID | 类型 | 分配模块 | TR 节点 | 承诺交付 | 版本目标 | 测试用例 | 状态 |\n| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |\n${versionedData[v].rtm.join('\n')}\n\n`;
 });
-fs.writeFileSync('docs/spec-rtm.md', rtmContent);
+fs.writeFileSync('docs/03-traceability/spec-rtm.md', rtmContent);
 
-fs.writeFileSync('docs/spec-rtm.md', rtmContent);
+fs.writeFileSync('docs/03-traceability/spec-rtm.md', rtmContent);
 console.log(`Generated ${rrList.length} RRs, ${irList.length} IRs, ${srList.length} SRs/ARs with TR Node mappings.`);
