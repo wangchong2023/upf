@@ -1,6 +1,6 @@
 /**
  * @职责: 自动补齐的治理脚本
- * @版本: v1.8 (SMART Config Edition)
+ * @版本: v2.0 (Full Quality Baseline Edition)
  */
 
 const path = require('path');
@@ -58,6 +58,7 @@ try {
             QCLM: 'docs/05-quality/spec-qclm.md',
             VERIFY_DIR: 'docs/05-quality/verification',
             QA_LOG: 'docs/05-quality/verification/qa-audit-log.md',
+            METRICS_REPORT: 'docs/05-quality/verification/quality-metrics-report.json',
             TEST_CASE_TEMPLATE: 'docs/05-quality/verification/test-case-template.md',
             TEST_CASES_DIR: 'docs/05-quality/verification/test-cases',
             API_DIR: 'docs/02-design/api/',
@@ -75,6 +76,20 @@ try {
             TARGET_PASS_RATE: 100.0,
             HEAL_COVERAGE_MOCK: 85.0,
             EVIDENCE_MAX_AGE_SEC: 300
+        },
+        METRICS_THRESHOLDS: {
+            REQ_STABILITY: 0.9,           // 需求稳定度 > 90%
+            REQ_REVIEW_DENSITY: 0.3,      // 需求评审缺陷密度 0.3-0.5/页
+            DESIGN_REVIEW_DENSITY: 0.5,   // 设计评审缺陷密度 0.5/页
+            CODE_REVIEW_DENSITY: 8.0,     // 代码评审缺陷密度 >= 8/KLOC
+            MAX_COMPLEXITY: 15,           // 平均圈复杂度 < 15
+            MAX_DUPLICATION: 0.1,         // 重复代码比例 < 10%
+            MIN_TC_PER_SR: 1.0,           // 测试用例对需求覆盖率 100% (即 1:1)
+            MIN_TC_DENSITY: 20,           // 测试用例密度 20个/KLOC
+            MIN_PASS_RATE: 98.0,          // 用例执行通过率 > 98%
+            MAX_TEST_ROUNDS: 3,           // 版本测试轮次 <= 3
+            MAX_BUG_REOPEN_RATE: 0.05,    // Bug 回归不通过率 < 5%
+            MIN_TRACE_DENSITY: 1.0        // 每 KLOC 必须包含的 @Trace 注解数
         },
         OSS_POLICY: {
             FORBIDDEN: ['GPL', 'AGPL', 'SSPL'],

@@ -26,3 +26,9 @@
 
 ## 5. 错误信息
 - Timeout
+
+## 3. 测试步骤
+1. 启动 gNB 模拟器并注册 UPF。
+2. 发送 PFCP Session Establishment Request。
+3. 物理核实 VPP 数据面 FIB 表项已正确注入。
+4. 执行双向 PING 测试，验证 N3/N6 连通性。

@@ -1537,3 +1537,6 @@
 ## 会话管理
 ### PFCP 链路治理
   - 支持 N4 接口 PFCP 心跳检测与链路自动恢复
+## 报头处理
+### GTP-U 增强
+  - 支持 N3 接口 GTP-U 扩展报头 (PDU Session Container) 物理解析

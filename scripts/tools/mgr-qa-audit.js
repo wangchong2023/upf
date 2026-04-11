@@ -1,5 +1,5 @@
 /**
- * @职责: QA 独立审计脚本 v1.1 (High-Priority Defect Blocking Edition)
+ * @职责: QA 独立审计脚本 v1.2 (Quality Metrics Edition)
  * @作者: Gemini CLI
  */
 
@@ -29,7 +29,6 @@ function main() {
             let criticalDefects = 0;
 
             lines.forEach(line => {
-                // 匹配包含 P0 或 P1 且状态为 Open 或 In Progress 的行
                 if (line.includes('|') && (line.includes('P0') || line.includes('P1'))) {
                     if (line.includes('Open') || line.includes('In Progress')) {
                         console.error(`❌ [BLOCKER] Critical defect found: ${line.trim()}`);
@@ -43,6 +42,10 @@ function main() {
                 process.exit(1);
             }
         }
+
+        // 3. 执行量化质量度量审计 (New SMART Requirement)
+        console.log("🔍 [QA Audit] Executing quantitative quality metrics audit...");
+        execSync(`node scripts/tools/mgr-quality-metrics.js`, { stdio: 'inherit' });
 
         console.log("✅ QA Quality Gate Audit Passed.");
     } catch (error) {
