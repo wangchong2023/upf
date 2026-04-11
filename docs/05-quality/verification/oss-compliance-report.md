@@ -1,12 +1,8 @@
-# OSS Compliance & SBOM Audit Report (v2.0)
+# 开源合规深度审计报告 (Deep OSS Audit)
 
-## 1. SBOM Overview
-| Component | Version | License | Status |
-| :--- | :--- | :--- | :--- |
+- **审计日期**: 2026-04-11
+- **go.mod 依赖数**: 1
+- **合规状态**: ✅ 100% 合规
 
-## 2. Compliance Verdict
-✅ All components satisfy the project license policy.
-
-
----
-*Audit Timestamp: 2026-04-11T15:07:26.293Z*
+## 1. 审计明细
+✅ 所有依赖均已正确履行协议义务。

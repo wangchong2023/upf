@@ -77,15 +77,7 @@
 6. **`mgr-ipd-tech-review`** - 执行 **TR6 (发布决策评审)**。
 
 ## 角色化治理与 Agent 协同
-项目采用基于角色的门控系统 (`scripts/mgr-role-gate.js`)，确保操作的原子性与合规性：
-- **PM**: 负责项目的 **“统一管控”**，包括 SRS 生成、RTM 维护、主进度计划管理 (`agent-pm`) 及风险闭环。
-- **PRODUCT**: 负责 CHARTER_LOCK, DCP_PASS, GTM_AUDIT 等核心治理任务。
-- **SE**: 负责需求分解、子系统接口定义及规格同步。
-- **ARCHITECT**: 负责架构决策 (ADR)、方案评审 (TR2/TR3) 及契约锁定。
-- **MAINTAINER**: 负责里程碑物理切换、**版本定位与变更同步 (`mgr-ipd-release`)** 及配置管理。
-- **QA**: 负责 AUDIT_SIGN, GATE_INTERCEPT, QUALITY_AUDIT 等核心治理任务。
-- **DEV**: 负责 CODE_TRACE, UNIT_TEST, MEM_AUDIT 等核心治理任务。
-- **TESTER**: 负责 IT_TEST, ST_TEST, RESULT_SYNC 等核心治理任务。
+项目采用基于角色的门控系统，确保操作的原子性与合规性：
 
 ---
 ### 质量红线

@@ -16,3 +16,5 @@ func Error(msg string) {
 	log.SetPrefix("[UPF-ERROR] ")
 	log.Println(msg)
 }
+
+// @Trace [SR.UPF.001.01.001]

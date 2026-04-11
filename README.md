@@ -32,28 +32,37 @@
 ---
 
 ## 🚀 关键指令
-- **stage-next**: 流程扭转 (示例: make stage-next NEXT=TR4)
-- **release**: 版本管理与发布 (示例: make release VERSION=v1.0.0) 相关 Skill: mgr-ipd-release
-- **changelog**: 自动生成变更日志 (Changelog)
-- **agent-pm**: 构建多角色 Agent 系统 PM Agent: 自动生成需求矩阵、审计进度并触发下游调度
-- **agent-scheduler**: 调度 Agent: 基于 RTM 承诺日期自动推导下游子任务计划
-- **agent-se**: 执行 agent-se 指令
-- **agent-architect**: 执行 agent-architect 指令
-- **agent-product**: 执行 agent-product 指令
-- **agent-qa**: 执行 agent-qa 指令
-- **agent-dev**: 执行 agent-dev 指令
-- **agent-tester**: 执行 agent-tester 指令
-- **agent-risk**: 风险 Agent: 自动跟踪风险矩阵并生成预警
-- **parallel-planning**: 并行规划: 同步触发需求同步、分解与架构审计建议
-- **parallel-dev-test**: 并行开发与测试: Dev 实现逻辑的同时 Tester 自动生成测试桩
-- **quality-gate**: 质量门控总入口 (默认执行全量审计)
-- **branch-feature**: 分支管理: 创建特性开发分支 (示例: make branch-feature ID=001)
-- **branch-release**: 分支管理: 创建发布冻结分支 (示例: make branch-release VERSION=1.0.0)
-- **branch-hotfix**: 分支管理: 创建紧急热修分支 (示例: make branch-hotfix ID=001)
-- **backport**: 跨版本变更同步 (示例: make backport COMMIT=c0ffee)
-- **release-report**: 版本完备性报告 (TR6 准出物) 相关 Skill: mgr-ipd-release
-- **fix-all**: 自动纠偏总入口
 
----
-*Powered by Gemini CLI & QA Expert Framework.*
+| 指令 | 职责说明 |
+| :--- | :--- |
+| `make sync-reqs` | 需求同步 |
+| `make flow-dryrun` | IPD 全生命周期干跑仿真 |
+| `make agent-pm` | 执行 agent-pm 指令 |
+| `make agent-scheduler` | 执行 agent-scheduler 指令 |
+| `make agent-se` | 执行 agent-se 指令 |
+| `make agent-architect` | 执行 agent-architect 指令 |
+| `make agent-product` | 执行 agent-product 指令 |
+| `make agent-qa` | 执行 agent-qa 指令 |
+| `make agent-dev` | 执行 agent-dev 指令 |
+| `make agent-tester` | 执行 agent-tester 指令 |
+| `make agent-risk` | 执行 agent-risk 指令 |
+| `make quality-gate` | 质量门控总入口 |
 
+
+## 🛡️ 治理基线与术语
+
+| 术语/文件 | 治理职责 |
+| :--- | :--- |
+| `CDCP` | 核心 IPD 交付件或管理节点 |
+| `PDCP` | 核心 IPD 交付件或管理节点 |
+| `ADCP` | 核心 IPD 交付件或管理节点 |
+| `SBOM` | 核心 IPD 交付件或管理节点 |
+| `TDD` | 核心 IPD 交付件或管理节点 |
+| `DFMEA` | 核心 IPD 交付件或管理节点 |
+| `spec-srs.md` | 核心 IPD 交付件或管理节点 |
+| `spec-rtm.md` | 核心 IPD 交付件或管理节点 |
+| `spec-qclm.md` | 核心 IPD 交付件或管理节点 |
+| `spec-rcr.md` | 核心 IPD 交付件或管理节点 |
+| `spec-coding-standards.md` | 核心 IPD 交付件或管理节点 |
+| `snake_case` | 核心 IPD 交付件或管理节点 |
+| `VPP` | 核心 IPD 交付件或管理节点 |

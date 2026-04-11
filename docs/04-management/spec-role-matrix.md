@@ -15,7 +15,7 @@
 | Agent | Input Contract (Required Docs) | Output Contract (Artifacts) | Trigger / Dependency |
 | :--- | :--- | :--- | :--- |
 | `agent-product` | Market Requirements | `spec-charter.md`, `product-spec.md` | Start of Concept |
-| `agent-pm` | Project Plan, Risk Matrix | `docs/spec-project-plan.md`, `docs/03-traceability/spec-rtm.md`| After Charter Lock |
+| `agent-pm` | Project Plan, Risk Matrix | `./spec-project-plan.md`, `docs/03-traceability/spec-rtm.md`| After Charter Lock |
 | `agent-se` | `docs/01-requirements/spec-srs.md` | `docs/02-design/api/external/`, `docs/02-design/spec-sds.md` (IR level) | After CDCP |
 | `agent-architect`| `docs/01-requirements/spec-srs.md`, `docs/02-design/api/` | `docs/02-design/spec-sds.md` (SDS), `docs/02-design/arch/adr/` | TR1/TR2 Pass |
 | `agent-dev` | `docs/02-design/spec-sds.md`, `docs/02-design/api/` | `src/**/*.go`, `src/**/*.c`, `docs/02-design/api/internal/`| TR3 Pass |
