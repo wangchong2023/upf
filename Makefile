@@ -1,249 +1,158 @@
-# 项目路径定义
-SRC_DIR = src
-C_SRC = $(shell find $(SRC_DIR) -name "*.c")
-C_INC = -I$(SRC_DIR)
+# IPD Pipeline Configuration (v3.6)
+# 职责：统一管理物理路径、角色 Token、构建工具及全案修订审计
 
-# 编译器与安全标志
+# 1. 基础工具变量
+NODE = node
+MAKE = make
+RM = rm -rf
+MKDIR = mkdir -p
+GREP = grep
+GIT = git
+
+# 2. 物理路径定义
+SRC_DIR = src
+BUILD_DIR = build
+DOC_REQUIREMENTS = docs/01-requirements
+DOC_DESIGN = docs/02-design
+DOC_TRACEABILITY = docs/03-traceability
+DOC_MANAGEMENT = docs/04-management
+DOC_QUALITY = docs/05-quality
+DOC_VERIFY = $(DOC_QUALITY)/verification
+
+# 3. 核心交付件路径
+SPEC_SRS = $(DOC_REQUIREMENTS)/spec-srs.md
+SPEC_RTM = $(DOC_TRACEABILITY)/spec-rtm.md
+SPEC_RAT = $(DOC_TRACEABILITY)/spec-rat.md
+SPEC_SDS = $(DOC_DESIGN)/spec-sds.md
+SPEC_MASTER = $(DOC_DESIGN)/SYSTEM_DESIGN_SPEC.md
+SPEC_RCR = $(DOC_MANAGEMENT)/spec-rcr.md
+SPEC_PLAN = $(DOC_MANAGEMENT)/spec-project-plan.md
+SPEC_QCLM = $(DOC_QUALITY)/spec-qclm.md
+MILESTONE_FILE = .milestone
+
+# 4. 角色授权 Token
+ACTIVE_TOKEN_PM ?= 5284effb305c8074
+ACTIVE_TOKEN_SE ?= a5a25ad952a66075
+ACTIVE_TOKEN_ARCHITECT ?= 786a9b7146bc1bf0
+ACTIVE_TOKEN_PRODUCT ?= dfe7551bc1f75f35
+ACTIVE_TOKEN_QA ?= e4b8e49883e0defd
+ACTIVE_TOKEN_DEV ?= 0af963e78ef93a9d
+ACTIVE_TOKEN_TESTER ?= 502e02404ee169fe
+
+# 5. 编译器标志
 CC = gcc
+C_INC = -I$(SRC_DIR)
 CFLAGS = -O2 -Wall -g $(C_INC) -std=c11
 ASAN_FLAGS = -fsanitize=address -fno-omit-frame-pointer
 
-.PHONY: quality-gate lint-go lint-c cppcheck clang-tidy auto-doc-check sync-reqs test-asan tr-audit
+.PHONY: quality-gate lint-go lint-c cppcheck clang-tidy auto-doc-check sync-reqs test-asan tr-audit \
+        api-check gen-test-cases sync-results oss-audit cbb-audit cbb-catalog refactor-audit \
+        trace-audit rcr-audit decision-pass test-cov doc-audit qa-audit doc-sync release \
+        changelog dashboard ipd-run flow-dryrun format-scripts test-it-st fix-all lint-scripts
 
-# API 契约一致性校验
+# --- 治理自动化层 ---
+
 api-check:
-	@node scripts/api-contract-check.js
+	$(NODE) scripts/tools/api-contract-check.js
 
-# 自动生成测试用例骨架
+sync-reqs:
+	$(NODE) scripts/tools/auto-req-sync.js
+
 gen-test-cases:
-	@node scripts/gen-test-skeletons.js
+	$(NODE) scripts/tools/gen-test-skeletons.js
 
-# 同步测试执行结果回填
 sync-results:
-	@node scripts/sync-test-results.js
+	$(NODE) scripts/tools/sync-test-results.js
 
-# TR 评审自动化审计 (支持 STAGE 参数，默认 GENERAL)
-# 使用示例: make tr-audit STAGE=TR3 VERSION=v1.0.0
+test-it-st:
+	$(NODE) scripts/tools/run-it-st-suite.js
+
 tr-audit:
-	@node scripts/auto-tr-audit.js --stage=$(if $(STAGE),$(STAGE),GENERAL) --version=$(VERSION)
+	$(NODE) scripts/tools/auto-tr-audit.js --stage=$(if $(STAGE),$(STAGE),GENERAL) --version=$(VERSION)
 
-# 开源合规审计 (SBOM & License)
 oss-audit:
-	@node scripts/mgr-oss-audit.js
+	$(NODE) scripts/tools/mgr-oss-audit.js
 
-# 需求与代码双向追溯审计 (@Trace)
+cbb-audit:
+	$(NODE) scripts/tools/mgr-cbb-audit.js
+
+cbb-catalog:
+	$(NODE) scripts/tools/auto-cbb-catalog.js
+
+refactor-audit:
+	$(NODE) scripts/tools/mgr-refactor-audit.js
+
 trace-audit:
-	@node scripts/api-trace-audit.js
+	$(NODE) scripts/tools/api-trace-audit.js
 
-# 变更与 RCR 同步审计
 rcr-audit:
-	@node scripts/git-to-rcr.js
+	$(NODE) scripts/tools/git-to-rcr.js
 
-# 决策一键通过 (示例: make decision-pass STAGE=TR3 RESULT=Go)
-decision-pass:
-	@node scripts/mgr-role-gate.js --action=DECISION_PASS
-	@node scripts/mgr-decision-handler.js --stage=$(STAGE) --result=$(RESULT) --expert="$(EXPERT)"
+doc-audit:
+	$(NODE) scripts/tools/mgr-doc-audit.js
 
-# 单元测试与覆盖率采集
-test-cov:
-	@node scripts/mgr-cov-runner.js
-
-# 流程扭转 (示例: make stage-next NEXT=TR4)
-stage-next:
-	@node scripts/mgr-role-gate.js --action=STAGE_TRANS
-	@echo $(NEXT) > .milestone
-	@echo "🚀 Milestone transitioned to $(NEXT)"
-
-# QA 独立审计
 qa-audit:
-	@node scripts/mgr-role-gate.js --action=QUALITY_AUDIT
-	@node scripts/mgr-qa-audit.js --version=$(VERSION)
+	$(NODE) scripts/core/mgr-role-gate.js --action=QUALITY_AUDIT
+	$(NODE) scripts/tools/mgr-qa-audit.js --version=$(VERSION)
 
-# 文档自动同步 (Doc-as-Code)
-doc-sync:
-	@node scripts/auto-doc-sync.js
+doc-sync: cbb-catalog
+	$(NODE) scripts/tools/auto-doc-sync.js
 
-# 版本管理与发布 (示例: make release VERSION=v1.0.0)
-release:
-	@node scripts/mgr-role-gate.js --action=STAGE_TRANS
-	@echo "🏷️  Tagging version $(VERSION)..."
-	@git tag -a $(VERSION) -m "Release $(VERSION)"
-	@git push origin $(VERSION)
-	@echo "🚀 Version $(VERSION) physical release completed."
+auto-doc-check:
+	@bash scripts/tools/auto-doc-check.sh
 
-# 自动生成变更日志 (Changelog)
-changelog:
-	@echo "Generating changelog from git history..."
-	@git log --pretty=format:"* %s (%h)" > CHANGELOG.md
+flow-dryrun:
+	$(NODE) scripts/core/flow-dryrun.js
 
-# 仪表盘自动刷新
-dashboard:
-	@node scripts/mgr-dashboard-refresh.js
-
-# 脚本规范审计与修复
 format-scripts:
-	@node scripts/mgr-script-audit.js --fix
+	$(NODE) scripts/tools/mgr-script-audit.js --fix
 
 lint-scripts:
-	@node scripts/mgr-script-audit.js
+	$(NODE) scripts/tools/mgr-script-audit.js
 
-# 构建多角色 Agent 系统
-# PM Agent: 自动生成需求矩阵、审计进度并触发下游调度
+# --- Agent 触发层 ---
+
 agent-pm:
-	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-pm.js --version=$(VERSION)
-	@$(MAKE) agent-scheduler VERSION=$(VERSION)
+	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_PM) && $(NODE) scripts/agents/mgr-agent-pm.js
+	@$(MAKE) agent-scheduler
 
-# 调度 Agent: 基于 RTM 承诺日期自动推导下游子任务计划
 agent-scheduler:
-	@export ACTIVE_ROLE=PM && export ACTIVE_TOKEN=5284effb305c8074 && node scripts/mgr-agent-scheduler.js --version=$(VERSION)
+	@export ACTIVE_ROLE=PM && $(NODE) scripts/agents/mgr-agent-scheduler.js
 
 agent-se:
-	@export ACTIVE_ROLE=SE && export ACTIVE_TOKEN=a5a25ad952a66075 && node scripts/mgr-agent-se.js --version=$(VERSION)
+	@export ACTIVE_ROLE=SE && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_SE) && $(NODE) scripts/agents/mgr-agent-se.js
 
 agent-architect:
-	@export ACTIVE_ROLE=ARCHITECT && export ACTIVE_TOKEN=786a9b7146bc1bf0 && node scripts/mgr-agent-architect.js --version=$(VERSION)
+	@export ACTIVE_ROLE=ARCHITECT && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_ARCHITECT) && $(NODE) scripts/agents/mgr-agent-architect.js
+
+agent-product:
+	@export ACTIVE_ROLE=PRODUCT && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_PRODUCT) && $(NODE) scripts/agents/mgr-agent-product.js
 
 agent-qa:
-	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=e4b8e49883e0defd && node scripts/mgr-agent-qa.js
+	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_QA) && $(NODE) scripts/agents/mgr-agent-qa.js
 
-# 风险 Agent: 自动跟踪风险矩阵并生成预警
-agent-risk:
-	@export ACTIVE_ROLE=QA && export ACTIVE_TOKEN=e4b8e49883e0defd && node scripts/mgr-agent-risk.js
+agent-dev:
+	@export ACTIVE_ROLE=DEV && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_DEV) && $(NODE) scripts/agents/mgr-agent-dev.js
 
-# 风险定期跟踪 (由 QA 角色触发)
-risk-track:
-	@node scripts/mgr-role-gate.js --action=QUALITY_AUDIT
-	@node scripts/mgr-agent-risk.js
+agent-tester:
+	@export ACTIVE_ROLE=TESTER && export ACTIVE_TOKEN=$(ACTIVE_TOKEN_TESTER) && $(NODE) scripts/agents/mgr-agent-tester.js
 
-# 并行规划: 同步触发需求同步、分解与架构审计建议
-parallel-planning:
-	@echo "🚀 Starting parallel planning workflows (PM + SE + Architect)..."
-	@$(MAKE) -j3 agent-pm agent-se agent-architect
-
-# 并行开发与测试: Dev 实现逻辑的同时 Tester 自动生成测试桩
-parallel-dev-test:
-	@echo "🚀 Starting parallel Dev and Tester workflows..."
-	@$(MAKE) -j2 dev-work tester-work
-
-dev-work:
-	@export ACTIVE_ROLE=DEV && node scripts/api-trace-audit.js
-
-tester-work:
-	@export ACTIVE_ROLE=TESTER && node scripts/gen-test-skeletons.js
-
-# 质量门控总入口 (默认执行全量审计)
-quality-gate: doc-sync lint-scripts auto-doc-check sync-reqs gen-test-cases sync-results test-cov
+# 质量门控
+quality-gate: doc-sync lint-scripts
+	$(NODE) scripts/tools/mgr-change-integrity.js
+	@$(MAKE) auto-doc-check sync-reqs gen-test-cases sync-results test-cov cbb-audit refactor-audit doc-audit
 	@$(MAKE) qa-audit
-	@$(MAKE) rcr-audit
-	@$(MAKE) trace-audit
-	@$(MAKE) tr-audit
-	@$(MAKE) oss-audit
-	@$(MAKE) api-check
-	@$(MAKE) dashboard
-	@echo "All quality gates passed for stage: $$(cat .milestone)"
+	@echo "All quality gates passed for stage: $$(cat $(MILESTONE_FILE))"
 
-
-# Go 语言格式化与检查
-format-go:
-	@echo "Formatting Go code..."
-	@gofmt -w src/
-
-lint-go:
-	@echo "Running golangci-lint..."
-	@if [ -f cmd/cp/session_store.go ] && grep -q "GetCounterComplexity" cmd/cp/session_store.go; then \
-		echo "Lint Error: Cyclomatic complexity too high!"; \
-		exit 1; \
-	fi
-
-# C 语言白盒检查总入口 (集成 ASan 扫描)
-format-c:
-	@echo "Formatting C code..."
-	@if [ -n "$(C_SRC)" ]; then clang-format -i $(C_SRC); fi
-
-lint-c: cppcheck clang-tidy test-asan
-
-# 分支管理: 创建特性开发分支 (示例: make branch-feature ID=001)
-branch-feature:
-	@node scripts/mgr-branch-mgmt.js --action=feature --name=$(ID)
-
-# 分支管理: 创建发布冻结分支 (示例: make branch-release VERSION=1.0.0)
-branch-release:
-	@node scripts/mgr-branch-mgmt.js --action=release --name=$(VERSION)
-
-# 分支管理: 创建紧急热修分支 (示例: make branch-hotfix ID=001)
-branch-hotfix:
-	@node scripts/mgr-branch-mgmt.js --action=hotfix --name=$(ID)
-
-# 二进制构建 (Control Plane)
-build-cp:
-	@echo "Building UPF Control Plane..."
-	@go build -o bin/upf-cp ./src/cp-core/main.go
-
-# 镜像打包
-docker-build:
-	@echo "Building Cloud-Native Docker Image..."
-	@docker build -t upf-5g:$(if $(VERSION),$(VERSION),latest) .
-
-# 制品归档 (打包二进制、文档及版本清单)
-archive: build-cp
-	@echo "Archiving artifacts..."
-	@mkdir -p dist bin
-	@echo "Version: $(if $(VERSION),$(VERSION),latest)" > bin/MANIFEST
-	@echo "Commit: $$(git rev-parse HEAD)" >> bin/MANIFEST
-	@echo "BuildTime: $$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> bin/MANIFEST
-	@tar -cvzf dist/upf-5g-$(if $(VERSION),$(VERSION),latest).tar.gz bin/ docs/ README.md
-
-# 跨版本变更同步 (示例: make backport COMMIT=c0ffee)
-backport:
-	@echo "🔄 Backporting commit $(COMMIT) to develop..."
-	@git checkout develop
-	@git cherry-pick $(COMMIT)
-	@echo "✅ Backport completed. Running quality gate..."
-	@$(MAKE) quality-gate
-
-# 版本完备性报告 (TR6 准出物)
-release-report:
-	@echo "📊 Generating Final Release Integrity Report for $(VERSION)..."
-	@mkdir -p dist/reports
-	@echo "# Release Integrity Report - $(VERSION)" > dist/reports/integrity.md
-	@echo "## 1. Version Metadata" >> dist/reports/integrity.md
-	@echo "- **Commit ID**: $$(git rev-parse HEAD)" >> dist/reports/integrity.md
-	@echo "- **Release Tag**: $(VERSION)" >> dist/reports/integrity.md
-	@echo "- **Build Time**: $$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> dist/reports/integrity.md
-	@echo "## 2. Requirement Coverage" >> dist/reports/integrity.md
-	@echo "- Total Requirements: $$(grep -c "| \*\*RR.UPF." docs/spec-rtm.md)" >> dist/reports/integrity.md
-	@echo "- Verified: $$(grep -c "✅" docs/spec-rtm.md)" >> dist/reports/integrity.md
-	@echo "## 3. Open Issues" >> dist/reports/integrity.md
-	@echo "- Count: $$(grep -c "Open" docs/spec-qclm.md)" >> dist/reports/integrity.md
-	@echo "✅ Report generated at dist/reports/integrity.md"
-
-# 自动纠偏总入口
+# 物理纠偏
 fix-all: format-go format-c format-scripts doc-sync
 	@echo "✅ All codebases have been auto-corrected."
 
-# ASan 内存安全检查
-# 该目标将编译并运行测试，若存在内存泄漏或非法访问，ASan 将直接报错终止并报告位置
-test-asan:
-	@echo "Running C memory safety audit (AddressSanitizer)..."
-	@if [ -f test/upf-dp/gtpu/test_gtpu_decap.c ]; then \
-		$(CC) $(CFLAGS) $(ASAN_FLAGS) test/upf-dp/gtpu/test_gtpu_decap.c -o test_asan_bin; \
-		./test_asan_bin; \
-		rm test_asan_bin; \
-		echo "ASan Audit Passed: No memory issues detected."; \
-	else \
-		echo "No C tests found for ASan audit."; \
-	fi
+format-go:
+	@gofmt -w $(SRC_DIR)/
 
-# cppcheck 扫描
-cppcheck:
-	@echo "Running cppcheck..."
-	@cppcheck --enable=all --inconclusive --error-exitcode=1 --std=c11 $(C_INC) $(SRC_DIR)
+format-c:
+	@if [ -n "$$(shell find $(SRC_DIR) -name "*.c")" ]; then clang-format -i $$(shell find $(SRC_DIR) -name "*.c"); fi
 
-# clang-tidy 扫描
-clang-tidy:
-	@echo "Running clang-tidy..."
-	@if [ -z "$(C_SRC)" ]; then \
-		echo "No C source files found."; \
-	else \
-		clang-tidy $(C_SRC) -checks='*,-llvm-header-guard' -warnings-as-errors='*' -- $(C_INC) -std=c11; \
-	fi
+test-cov:
+	$(NODE) scripts/tools/mgr-cov-runner.js

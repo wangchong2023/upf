@@ -11,7 +11,7 @@
 
 ## 3. 容器安全与特权管理 (DfSec)
 - **最小化权限**: 数据面 Pod 尽量避免使用 `privileged: true`。应通过 `capabilities: add: ["NET_ADMIN", "IPC_LOCK", "SYS_ADMIN"]` 精准授权。
-- **镜像安全**: 必须通过 **mgr-sbom-audit** 确认镜像内不包含高危 CVE 漏洞库。
+- **镜像安全**: 必须通过 **mgr-ipd-sbom-audit** 确认镜像内不包含高危 CVE 漏洞库。
 
 ## 4. 业务连续性保证 (ISSV)
 - **就绪探测 (Readiness)**: 控制面必须在完成 PFCP Node 关联及 DDB 同步后，方可将 Readiness 标记为 True。

@@ -12,8 +12,12 @@
     - **Skill**: `[领域]-[职责]` (如 `arch-ha-dr`)。
     - **文档**: `[领域]-[主题].md` (如 `spec-srs.md`)。
     - **脚本**: `[领域]-[功能]` (如 `auto-req-sync.js`)。
-- **[参考]** 编码实现必须遵循 **`docs/spec-coding-standards.md`**。
-- **[契约]** API 规格强制存储于 \`docs/api/\`:
+- **[自愈]** **生产级自愈 (Production-Grade Self-Healing)**:
+    - 所有 Agent 调用强制集成 `Execute-Heal-Retry` 循环。
+    - 任何自愈动作必须记录至 `docs/05-quality/verification/healing-audit-log.md` 以供合规审计。
+- **[SMART]** 所有 Skill 必须符合 SMART 原则，且包含强制性的 **“交付契约 (Delivery Contract)”**，明确交付件、质量门限、里程碑及评审角色。
+- **[参考]** 编码实现必须遵循 **`docs/05-quality/spec-coding-standards.md`**。
+- **[契约]** API 规格强制存储于 \`docs/02-design/api/\`:
     - \`external/\`: 3GPP 标准接口 (N3/N4/N6), Design-First。
     - \`internal/\`: 微服务接口, Code-First (Swag 驱动)。
 - **[强制]** 任何对本 `GEMINI.md` 中研发阶段、Skill 映射或质量红线的修改，必须同步刷新 `README.md`。
@@ -23,16 +27,17 @@
 
 为了确保端到端高质量交付，请根据研发阶段依次调用以下 Skill。
 
-### 第一阶段：需求与流程基线 (Phase 1: Flow)
+### 第一阶段：Charter 立项与需求基线 (Phase 1: Flow) - Driven by `agent-product`, `agent-pm` & `agent-se`
+0. `mgr-ipd-charter` (Charter 移交) - **[agent-product]** 接收产品包商业目标、DFx特性诉求及投资回报预测，作为需求分析前提。
 1. `flow-req-spec` (需求定义) - 定义 RR/IR。
-2. **`mgr-oss-governance` (开源治理)** - 执行事前准入选型与 License 审核。
-3. `flow-feat-trace` (特性追踪) - 维护 `spec-rtm.md`。
-4. `mgr-change-mgr` (变更管理) - 记录 `spec-rcr.md`。
-5. **`mgr-tech-review` (技术评审)** - 执行 **TR1 (需求基线评审)**。
-6. **`mgr-dcp-decision` (决策评审)** - 执行 **CDCP (概念决策)**。
+2. **`mgr-ipd-oss-governance` (开源治理)** - 执行事前准入选型与 License 审核。
+3. `flow-feat-trace` (特性追踪) - 维护 `docs/03-traceability/spec-rtm.md`。
+4. `mgr-ipd-change` (变更管理) - 记录 `docs/04-management/spec-rcr.md`。
+5. **`mgr-ipd-tech-review` (技术评审)** - 执行 **TR1 (需求基线评审)**。
+6. **`mgr-ipd-dcp-decision` (决策评审)** - 执行 **CDCP (概念决策)**。
 7. `flow-doc-coauthoring` (文档协同) - SRS/RTM 联合打磨。
 
-### 第二阶段：架构设计与可靠性 (Phase 2: Arch)
+### 第二阶段：架构设计与可靠性 (Phase 2: Arch) - Driven by `agent-se` & `agent-architect`
 1. `arch-adr-decision` (架构决策) - 必须包含 Alternatives。
 2. **`arch-hld-expert` (概要设计)** - 产出系统级 SDS，整合 4+1 视图与 DfX。
 3. **`flow-feature-design` (特性设计)** - 针对复杂业务制定端到端技术方案。
@@ -43,56 +48,69 @@
 8. **子系统详细设计 (arch-sub)**: 
    - 调用 `arch-sub-core-dp` (转发面) / `arch-sub-core-cp` (控制面) 进行模块细化。
    - 调用 `arch-sub-base-lib` (基础库) 等公共组件规约。
-9. **`mgr-tech-review`** - 执行 **TR2 (方案评审)** 与 **TR3 (设评)**。
-10. **`mgr-dcp-decision`** - 执行 **PDCP (计划决策)**。
+9. **`mgr-ipd-tech-review`** - 执行 **TR2 (方案评审, agent-se)** 与 **TR3 (设评, agent-architect)**。
+10. **`mgr-ipd-dcp-decision`** - 执行 **PDCP (计划决策, agent-architect)**。
 
-### 第三阶段：高质量开发与规约 (Phase 3: Dev)
+### 第三阶段：高质量开发与规约 (Phase 3: Dev) - Driven by `agent-dev`
+0. **`flow-writing-plans` (研发蓝图专家)** - **[强制准入]** 所有编码实施前，必须将 SDS 拆解为原子级微任务并填入 `docs/04-management/spec-downstream-tasks.md`。
 1. `dev-c-std` (C 规范) - **[硬性] snake_case, 大括号换行**。
 2. `dev-go-ms-std` (Go 规范) - 遵循项目统一风格。
 3. **`test-driven-development` (TDD)** - 全局 Skill 驱动。
 4. `dev-sec-std` (安全开发) - 华为安全编码基线。
-5. **`mgr-tech-review`** - 执行 **TR4 (详设与单元验证评审)**。
+5. **`mgr-ipd-tech-review`** - 执行 **TR4 (详设与单元验证评审)**。
 
-### 第四阶段：集成测试与质量闭环 (Phase 4: Test)
+### 第四阶段：集成测试与质量闭环 (Phase 4: Test) - Driven by `agent-tester`
 1. `test-quality-gate` (质量门控) - 执行 `make quality-gate`。
-2. `test-issue-fix` (缺陷管理) - 闭环 `spec-qclm.md`。
-3. **`flow-rat-acceptance` (需求验收)** - 维护 **`spec-rat.md`**，执行演示验收。
-4. `test-webapp-testing` (Web 验证) - OAM 平面测试。
-5. **`mgr-tech-review`** - 执行 **TR5 (集成验收评审)**。
-5. **`mgr-dcp-decision`** - 执行 **ADCP (可获得性决策)**。
+2. `test-issue-fix` (缺陷管理) - 闭环 `docs/05-quality/spec-qclm.md`。
+3. **`mgr-ipd-tech-review`** - 执行 **TR4A (子系统联调评审)**，专用于 UPF 控制面与数据面的集成质量门限。
+4. **`flow-rat-acceptance` (需求验收)** - 维护 **`docs/03-traceability/spec-rat.md`**，执行演示验收。
+5. `test-webapp-testing` (Web 验证) - OAM 平面测试。
+6. **`mgr-ipd-tech-review`** - 执行 **TR5 (集成验收评审)**。
+7. **`mgr-ipd-dcp-decision`** - 执行 **ADCP (可获得性决策)**。
 
-### 第五阶段：发布归档与运维 (Phase 5: Release)
-1. **`mgr-spec-archiving` (规格归档)** - 实测值回填。
-2. **`mgr-oss-governance` (开源审计)** - 自动化 SBOM 提取与 CVE 漏洞扫描。
-3. **`mgr-tech-review-automation` (评审自动化)** - 执行 `make tr-audit`。
-4. **`mgr-version-mgmt` (版本管理)** & `mgr-cicd-pipe` (流水线)。
+### 第五阶段：发布归档与运维 (Phase 5: Release) - Driven by `agent-product`, `agent-qa` & `agent-pm`
+0. **`mgr-ipd-gtm` (GTM 治理)** - **[agent-product]** 执行产品规格审计与上市准备度检查，确保商业合规。
+1. **`mgr-ipd-spec-archiving` (规格归档)** - 实测值回填。
+2. **`mgr-ipd-oss-governance` (开源审计)** - 自动化 SBOM 提取与 CVE 漏洞扫描。
+3. **`mgr-ipd-tr-audit` (评审自动化)** - 执行 `make tr-audit`。
+4. **`mgr-ipd-release` (版本管理)** & `mgr-cicd-pipe` (流水线)。
 5. `mgr-obs-std` (可观测性) / `ops-sop-manual` (故障处理)。
-6. **`mgr-tech-review`** - 执行 **TR6 (发布决策评审)**。
+6. **`mgr-ipd-tech-review`** - 执行 **TR6 (发布决策评审)**。
 
 ## 角色化治理与 Agent 协同
-项目采用基于角色的门控系统 (`scripts/mgr-role-gate.js`)，确保操作的原子性与合规性：
-- **PM**: 负责项目的 **“统一管控”**，包括 SRS 生成、RTM 维护、主进度计划管理 (`agent-pm`) 及风险闭环。
-- **SE**: 负责需求分解、子系统接口定义及规格同步。
-- **ARCHITECT**: 负责架构决策 (ADR)、方案评审 (TR2/TR3) 及契约锁定。
-- **MAINTAINER**: 负责里程碑物理切换、**版本定位与变更同步 (`mgr-version-mgmt`)** 及配置管理。
-- **QA**: 负责 AUDIT_SIGN, GATE_INTERCEPT, QUALITY_AUDIT 等核心治理任务。
-- **DEV**: 负责 CODE_TRACE, UNIT_TEST 等核心治理任务。
-- **TESTER**: 负责 IT_TEST, ST_TEST, RESULT_SYNC 等核心治理任务。
+项目采用基于角色的门控系统，确保操作的原子性与合规性：
 
 ---
 ### 质量红线
 - **代码物理纠偏**: 任何代码提交必须通过 `make fix-all` 自动格式化。`pre-commit` 钩子将物理拦截任何不符合 C/Go/JS 规范的源码入库。
-- **风险闭环管理**: 每次里程碑切换前必须刷新 `spec-risk-register.md`。任何状态为 **"Critical"** 的风险项未闭环前，TR 评审具有一票否决权。
+- **风险闭环管理**: 每次里程碑切换前必须刷新 `docs/04-management/spec-risk-register.md`。
+任何状态为 **"Critical"** 的风险项未闭环前，TR 评审具有一票否决权。
 
 - **重构质量红线**: 大规模重构必须由 **ARCHITECT** 执行评审，重构后必须通过全量单元测试与 `make quality-gate` 审计。
 - **角色越权拦截**: 任何里程碑切换 (`stage-next`) 或决策通过 (`decision-pass`) 指令必须通过 **`MAINTAINER`** 角色的身份校验。
-- **流程变革管控**: 流程的变更必须在 **`mgr-qa-expert`** 的指导下进行，QA 负责对流程运作结果进行全量监控与定期审计。
-- **QA 独立审计**: 任何 TR 评审前，必须由 **`mgr-qa-expert`** 执行流程合规性审计。
+- **流程变革管控**: 流程的变更必须在 **`mgr-ipd-qa-expert`** 的指导下进行，QA 负责对流程运作结果进行全量监控与定期审计。
+- **QA 独立审计**: 任何 TR 评审前，必须由 **`mgr-ipd-qa-expert`** 执行流程合规性审计。
 - **RTM 一致性**: 100% 的代码实现必须可回溯至 SRS 编号。
 - **TR 拦截**: 任何 TR 评审结论为 "No-Go" 或存在未闭环 QA Issue 时，禁止进入下一阶段。
 - **DCP 拦截**: 未经 DCP 批准的项目禁止启动物理资源的采购或大规模版本投入。
 - **OSS 准入**: 禁止引入具有传染性协议 (GPLv3/AGPL) 的开源组件。
-- **缺陷零清零**: TR5 之前，所有 P0/P1 级 Issue 必须处于 Closed 状态。
+- **缺陷零清零**: TR5 之前，所有 P0/P1 级 Issue 必须处于 Closed 状态（详见 `docs/05-quality/spec-qclm.md`）。
+
+## 🌟 后续演进目标 (Evolution Roadmap)
+
+**核心架构升级：基于 LangGraph 驱动的智能化流转与状态机**
+
+当前基于 Shell/JS 脚本的线性编排器 (`mgr-agent-orchestrator.js`) 将被重构为基于 **LangGraph** 的图结构多智能体协同框架。
+
+### 演进价值 (Why LangGraph?)
+1. **统一状态图 (State Graph)**: 将目前高度依赖物理文件读写的流转状态（如 `.milestone`, RTM 矩阵）收敛为 LangGraph 的核心 State 对象，极大提升内存级流转效率与状态一致性。
+2. **非线性自愈 (Cyclic Healing)**: 彻底突破线性脚本的死板。当物理网关（Design Gate）拦截时，利用 LangGraph 的**条件边 (Conditional Edges)** 实现“打回重做”的自动图流转（例如：开发节点失败 -> 自动路由回系统工程师节点补充规格）。
+3. **多维博弈 (Multi-Agent Debate)**: 在关键 DCP/TR 节点，支持 `PRODUCT`、`ARCHITECT` 和 `QA` 等角色通过 Graph 进行多轮上下文对话与共识博弈，而不仅仅是依序执行。
+
+### 演进路径 (Migration Path)
+- **Phase 1 [状态建模]**: 提炼 IPD 流程，定义符合 5G UPF 的全局 State Schema。
+- **Phase 2 [网关封装]**: 将现有的所有物理强校验脚本（`mgr-design-gate.js`, `mgr-change-integrity.js` 等）平滑包装为 LangGraph 的 **Validator Nodes (验证节点)**，保留其物理防御力。
+- **Phase 3 [图驱动]**: 编译执行图，完全替代传统的离散脚本调度，实现 Agent 之间的无缝、智能协同。
 
 ---
 *Generated by Gemini CLI. 遵循完整 IPD 治理与开源合规闭环。*

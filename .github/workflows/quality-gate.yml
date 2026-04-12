@@ -27,7 +27,7 @@ jobs:
 
       - name: Initialize Quality Gate
         run: |
-          mkdir -p docs/verification
+          mkdir -p docs/05-quality/verification
           # 此处可扩展安装 lint 工具
 
       - name: Run IPD Quality Gate
@@ -41,4 +41,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ipd-audit-reports
-          path: docs/verification/*.md
+          path: docs/05-quality/verification/*.md
