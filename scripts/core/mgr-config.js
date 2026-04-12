@@ -1,6 +1,6 @@
 /**
  * @职责: 自动补齐的治理脚本
- * @版本: v2.0 (Full Quality Baseline Edition)
+ * @版本: v2.2 (Master Design Edition)
  */
 
 const path = require('path');
@@ -40,6 +40,7 @@ try {
             FEATURE_LIST: 'docs/01-requirements/spec-feature-list.md',
             RTM: 'docs/03-traceability/spec-rtm.md',
             SDS: 'docs/02-design/spec-sds.md',
+            SYSTEM_DESIGN_SPEC: 'docs/02-design/SYSTEM_DESIGN_SPEC.md',
             RAT: 'docs/03-traceability/spec-rat.md',
             RCR: 'docs/04-management/spec-rcr.md',
             PLAN: 'docs/04-management/spec-project-plan.md',
@@ -49,6 +50,8 @@ try {
             TASK_PLAN: 'docs/04-management/spec-downstream-tasks.md',
             DASHBOARD: 'docs/04-management/upf-development-dashboard.md',
             SRC: 'src/',
+            CBB_DIR: 'src/lib-cbb/',
+            CBB_CATALOG: 'docs/02-design/arch/CBB_CATALOG.md',
             RESULTS: 'docs/05-quality/verification/test-results.json',
             COVERAGE: 'docs/05-quality/verification/unit-coverage.json',
             HEALING_LOG: 'docs/05-quality/verification/healing-audit-log.md',
@@ -69,7 +72,11 @@ try {
             OSS_ATTRIBUTIONS: 'docs/05-quality/OSS_ATTRIBUTIONS.md',
             CHARTER: 'docs/04-management/spec-charter.md',
             PRODUCT_SPEC: 'docs/02-design/api/external/product-spec.md',
-            N4_HEADER: 'src/cp-core/pfcp_session.h'
+            N4_HEADER: 'src/cp-core/pfcp_session.h',
+            ADR_TEMPLATE: 'docs/02-design/templates/ADR_TEMPLATE.md',
+            SDS_TEMPLATE: 'docs/02-design/templates/SDS_TEMPLATE.md',
+            LLD_TEMPLATE: 'docs/02-design/templates/LLD_TEMPLATE.md',
+            TEST_STRATEGY_TEMPLATE: 'docs/05-quality/templates/TEST_STRATEGY_TEMPLATE.md'
         },
         THRESHOLDS: {
             MIN_COVERAGE: 80.0,
@@ -78,18 +85,19 @@ try {
             EVIDENCE_MAX_AGE_SEC: 300
         },
         METRICS_THRESHOLDS: {
-            REQ_STABILITY: 0.9,           // 需求稳定度 > 90%
-            REQ_REVIEW_DENSITY: 0.3,      // 需求评审缺陷密度 0.3-0.5/页
-            DESIGN_REVIEW_DENSITY: 0.5,   // 设计评审缺陷密度 0.5/页
-            CODE_REVIEW_DENSITY: 8.0,     // 代码评审缺陷密度 >= 8/KLOC
-            MAX_COMPLEXITY: 15,           // 平均圈复杂度 < 15
-            MAX_DUPLICATION: 0.1,         // 重复代码比例 < 10%
-            MIN_TC_PER_SR: 1.0,           // 测试用例对需求覆盖率 100% (即 1:1)
-            MIN_TC_DENSITY: 20,           // 测试用例密度 20个/KLOC
-            MIN_PASS_RATE: 98.0,          // 用例执行通过率 > 98%
-            MAX_TEST_ROUNDS: 3,           // 版本测试轮次 <= 3
-            MAX_BUG_REOPEN_RATE: 0.05,    // Bug 回归不通过率 < 5%
-            MIN_TRACE_DENSITY: 1.0        // 每 KLOC 必须包含的 @Trace 注解数
+            REQ_STABILITY: 0.9,
+            REQ_REVIEW_DENSITY: 0.3,
+            DESIGN_REVIEW_DENSITY: 0.5,
+            CODE_REVIEW_DENSITY: 8.0,
+            MAX_COMPLEXITY: 15,
+            MAX_DUPLICATION: 0.1,
+            MIN_TC_PER_SR: 1.0,
+            MIN_TC_DENSITY: 20,
+            MIN_PASS_RATE: 98.0,
+            MAX_TEST_ROUNDS: 3,
+            MAX_BUG_REOPEN_RATE: 0.05,
+            MIN_TRACE_DENSITY: 1.0,
+            MIN_CBB_REUSE_RATE: 0.1
         },
         OSS_POLICY: {
             FORBIDDEN: ['GPL', 'AGPL', 'SSPL'],
@@ -99,15 +107,23 @@ try {
         MOCKS: {
             DRYRUN_REQ_ID: 'RR.UPF.DRYRUN.001'
         },
+        MILESTONE_AGENTS: {
+            [STAGES.TR1]: ["mgr-agent-product.js", "mgr-agent-pm.js", "mgr-agent-se.js"],
+            [STAGES.TR2]: ["mgr-agent-se.js"],
+            [STAGES.TR3]: ["mgr-agent-architect.js"],
+            [STAGES.TR4]: ["mgr-agent-dev.js"],
+            [STAGES.TR5]: ["mgr-agent-tester.js"],
+            [STAGES.TR6]: ["mgr-agent-product.js", "mgr-agent-qa.js", "mgr-agent-pm.js"]
+        },
         ROLE_PERMISSIONS: {
-            [ROLES.PM]: ["SCHEDULE_AUDIT", "RISK_TRACK", "RAT_ACCEPT", "DCP_APPROVE", "REQ_CHANGE", "SRS_GEN", "RTM_MAINTAIN", "PLAN_MANAGE"],
+            [ROLES.PM]: ["SCHEDULE_AUDIT", "RISK_TRACK", "RAT_ACCEPT", "PLAN_MANAGE", "SRS_GEN", "DCP_PASS"],
             [ROLES.PRODUCT]: ["CHARTER_LOCK", "DCP_PASS", "GTM_AUDIT"],
-            [ROLES.SE]: ["REQ_DECOMP", "INTF_DEF", "SRS_GEN", "RTM_MAINTAIN"],
-            [ROLES.ARCHITECT]: ["TR_APPROVE", "API_LOCKED", "HLD_CHANGE", "ADR_REVIEW"],
-            [ROLES.MAINTAINER]: ["STAGE_TRANS", "DECISION_PASS", "HOTFIX_APPROVE", "CONFIG_MANAGE"],
-            [ROLES.QA]: ["AUDIT_SIGN", "GATE_INTERCEPT", "QUALITY_AUDIT", "STUB_GEN", "RESULT_SYNC", "UNIT_TEST", "API_LOCKED", "CODE_TRACE", "SRS_GEN"],
-            [ROLES.DEV]: ["CODE_TRACE", "UNIT_TEST", "MEM_AUDIT"],
-            [ROLES.TESTER]: ["IT_TEST", "ST_TEST", "RESULT_SYNC", "STUB_GEN"],
+            [ROLES.SE]: ["SRS_GEN", "REQ_DECOMP", "INTF_DEF"],
+            [ROLES.ARCHITECT]: ["TR_APPROVE", "ADR_REVIEW", "RTM_MAINTAIN", "LLD_GEN", "API_LOCKED", "HLD_CHANGE"],
+            [ROLES.MAINTAINER]: ["STAGE_TRANS", "QUALITY_AUDIT", "DECISION_PASS", "HOTFIX_APPROVE"],
+            [ROLES.QA]: ["QUALITY_AUDIT", "AUDIT_SIGN", "GATE_INTERCEPT", "STUB_GEN", "RESULT_SYNC", "SRS_GEN"],
+            [ROLES.DEV]: ["CODE_TRACE", "UNIT_TEST", "LLD_GEN", "RTM_MAINTAIN", "MEM_AUDIT"],
+            [ROLES.TESTER]: ["IT_TEST", "ST_TEST", "TC_GEN", "RESULT_SYNC"],
             [ROLES.GUEST]: []
         }
     };

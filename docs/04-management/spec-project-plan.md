@@ -3,15 +3,15 @@
 ## 1. 核心里程碑计划 (Master Milestones)
 | 里程碑 | 关键活动 (Key Activities) | 计划完成日期 | 实际完成日期 | 状态 | 负责人 |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **CDCP** | 概念决策评审 (Concept Decision) | 2026-04-12 | 2026-04-12 | ✅ Done | PM |
-| **TR1** | 需求基线评审 (Requirements Review) | 2026-04-12 | 2026-04-12 | ✅ Done | PM |
-| **PDCP** | 计划决策评审 (Plan Decision) | 2026-04-12 | 2026-04-12 | ✅ Done | PM |
-| **TR2** | 方案设计评审 (Solution Review) | 2026-04-12 | 2026-04-12 | 🟡 WIP | ARCHITECT |
-| **TR3** | 架构设计评审 (Arch Review) | 2026-04-12 | 2026-04-12 | ✅ Done | ARCHITECT |
-| **TR4** | 详设与单元验证 (Dev & UT) | 2026-04-12 | - | ⚪️ Open | DEV |
-| **TR5** | 集成验收评审 (Integration Review) | 2026-04-12 | - | ⚪️ Open | TESTER |
-| **ADCP** | 可获得性决策 (Availability Decision) | 2026-04-12 | - | ⚪️ Open | PM |
-| **TR6** | 发布决策评审 (Release Review) | 2026-04-12 | - | ⚪️ Open | PM |
+| **CDCP** | 概念决策评审 (Concept Decision) | 2026-04-13 | 2026-04-13 | ✅ Done | PM |
+| **TR1** | 需求基线评审 (Requirements Review) | 2026-04-13 | 2026-04-13 | ✅ Done | PM |
+| **PDCP** | 计划决策评审 (Plan Decision) | 2026-04-13 | 2026-04-13 | ✅ Done | PM |
+| **TR2** | 方案设计评审 (Solution Review) | 2026-04-13 | 2026-04-13 | 🟡 WIP | ARCHITECT |
+| **TR3** | 架构设计评审 (Arch Review) | 2026-04-13 | 2026-04-13 | ✅ Done | ARCHITECT |
+| **TR4** | 详设与单元验证 (Dev & UT) | 2026-04-13 | - | ⚪️ Open | DEV |
+| **TR5** | 集成验收评审 (Integration Review) | 2026-04-13 | - | ⚪️ Open | TESTER |
+| **ADCP** | 可获得性决策 (Availability Decision) | 2026-04-13 | - | ⚪️ Open | PM |
+| **TR6** | 发布决策评审 (Release Review) | 2026-04-13 | - | ⚪️ Open | PM |
 
 ## 2. 进度监控与优化准则
 - **进度跟踪**: 每周五由 **PM Agent** 自动扫描主计划并更新仪表盘。

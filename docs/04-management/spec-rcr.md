@@ -13,3 +13,5 @@
 | **RCR.DRYRUN** | 2026-04-11 | DRYRUN | Auto-sync during dryrun | N/A | Low | **Closed** | Auto-passed |
 | **RCR.DRYRUN** | 2026-04-11 | DRYRUN | Auto-sync during dryrun | N/A | Low | **Closed** | Auto-passed |
 | **RCR.DRYRUN** | 2026-04-11 | DRYRUN | Auto-sync during dryrun | N/A | Low | **Closed** | Auto-passed |
+| **RCR.FINAL** | 2026-04-12 | ARCH | Final structural alignment for CBB and SMART | N/A | Low | **Closed** | Auto-passed |
+| **RCR.TEMPLATES** | 2026-04-12 | ARCH | Full SMART template alignment and revision history base | N/A | Low | **Closed** | Auto-passed |

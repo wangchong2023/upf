@@ -55,6 +55,9 @@ graph TD
 | **会话处理器** | SR.UPF.003.01.* | 处理 PFCP 建立/修改/删除流转。 |
 | **转发流水线** | SR.UPF.003.02.* | 实现 GTP-U 向量化剥离与 PDR 匹配。 |
 | **限速引擎** | SR.UPF.003.03.* | 基于双令牌桶 (Token Bucket) 执行 QER。 |
+| **链路管理器** | SR.UPF.001.02.002 | 维护 N4 接口 PFCP 心跳状态机，检测对端可用性。 |
+| **GTP-U增强解析** | SR.UPF.009.01.001 | 实现基于 ADR-009 的向量化扩展报头解析，提取 QFI 元数据。 |
+
 
 ### 1.5 技术模型 (Technical Model)
 - **控制面 (CP)**: Go 1.21+, 基于并发协程模型处理信令。
@@ -255,6 +258,12 @@ graph LR
 
 ### 6.1 控制面会话管理 (Session Management LLD)
 会话管理器通过哈希表 (SEID Hash Map) 实现会话的秒级检索。状态机处理 PFCP 消息时，遵循事件驱动模型，通过无锁队列与 I/O 协程通信。
+
+#### 6.1.1 N4 心跳状态机 [SR.UPF.001.02.002]
+- **定时器 T1**: 默认为 10s。每 T1 周期发送 `Heartbeat Request`。
+- **重试 N1**: 默认为 3 次。连续 N1 次未收到 `Heartbeat Response` 判定节点故障。
+- **状态同步**: 节点状态 (`Active/Dead`) 同步至 SDB，支撑无状态容灾切换。
+
 
 ### 6.2 数据面转发流水线 (Forwarding Plane LLD)
 VPP 插件通过向量化 (Vectorization) 处理报文，每批处理 256 个报文。PDR 匹配采用双级 Hash 表：第一级基于 F-TEID，第二级基于 PDI 细化条件，确保在 100 万级会话下依然保持恒定的转发时延。

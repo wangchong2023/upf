@@ -1,1 +1,10 @@
 mode: set
+upf/src/lib-cbb/oam/logger.go:10.23,13.2 2 0
+upf/src/lib-cbb/oam/logger.go:15.24,18.2 2 0
+upf/src/cp-core/dryrun_logic.go:5.24,5.36 1 1
+upf/src/cp-core/gtpu_ext.go:5.56,6.22 1 0
+upf/src/cp-core/gtpu_ext.go:6.22,8.3 1 0
+upf/src/cp-core/gtpu_ext.go:10.2,11.17 2 0
+upf/src/cp-core/pfcp_session.go:17.67,18.41 1 1
+upf/src/cp-core/pfcp_session.go:18.41,21.3 2 1
+upf/src/cp-core/pfcp_session.go:22.2,23.12 2 1

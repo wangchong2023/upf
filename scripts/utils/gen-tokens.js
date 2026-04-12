@@ -11,7 +11,7 @@ const crypto = require('crypto');
  */
 
 try {
-    const roles = ["PM", "SE", "ARCHITECT", "MAINTAINER", "QA", "DEV", "TESTER"];
+    const roles = ["PRODUCT", "PM", "SE", "ARCHITECT", "MAINTAINER", "QA", "DEV", "TESTER"];
     const secret = process.env.UPF_SYSTEM_SECRET || "upf-cloud-native-2026";
 
     console.log("# Role Token Generator for CI/CD");

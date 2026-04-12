@@ -1,15 +1,12 @@
 # IPD 全生命周期全链路语义化交付报告 (v3.2)
 
-## 1. 演练执行摘要 (生成时间: 2026/4/12 00:50:25)
+## 1. 演练执行摘要 (生成时间: 2026/4/12 11:38:46)
 
 | 序号 | 阶段 | 责任角色 | 语义链路摘要 | 发现/解决 | 状态 | 自愈动作 |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | 1 | TR1 | PRODUCT/PM/SE | RR.UPF.001: **操作维护（OAM）** | 0/0 | ✅ Passed | - |
 | 2 | TR2 | SE | 26 IRs (初始需求) / 521 SRs / 521 ARs | 0/0 | ✅ Passed | - |
 | 3 | TR3 | ARCHITECT | SDS Architecture & Subsystem Specification | 0/0 | ✅ Passed | - |
-| 4 | TR4 | DEV | 7 Source Files (src/svc-common/logger.go) | 0/0 | ✅ Passed | - |
-| 5 | TR5 | TESTER | 3 Acceptance Tests Completed | 0/0 | ✅ Passed | - |
-| 6 | TR6 | PRODUCT/QA/PM | Release Quality Gate & SBOM Archiving | 0/0 | ✅ Passed | - |
 
 ## 2. 数字化交付语义清单 (Deliverables Semantic Deep-Dive)
 
@@ -109,13 +106,17 @@
 - ... 及其他 501 条架构分配规格
 
 ### [Step 5] 物理实现清单 (Source Code & LOC)
-- src/svc-common/logger.go (20 lines)
 - src/dp-vpp-plugins/pdr_lookup_node.c (43 lines)
-- src/dp-vpp-plugins/upf_gtpu_decap.c (20 lines)
+- src/dp-vpp-plugins/upf_gtpu_decap.c (48 lines)
 - src/oam-mgr/config_manager.go (19 lines)
 - src/cp-core/pfcp_session_test.go (33 lines)
 - src/cp-core/pfcp_session.go (544 lines)
 - src/cp-core/gtpu_ext.go (12 lines)
+- src/cp-core/n4/heartbeat_test.go (35 lines)
+- src/cp-core/n4/node_mgmt.go (31 lines)
+- src/cp-core/n4/heartbeat.go (73 lines)
+- src/lib-cbb/oam/logger.go (20 lines)
+- src/lib-cbb/oam/logger_test.go (8 lines)
 
 ### [Step 6] 验收通过记录 (RAT Scenario & Evidence)
 - RR.UPF.001: 百万级会话建立与心跳维持演示

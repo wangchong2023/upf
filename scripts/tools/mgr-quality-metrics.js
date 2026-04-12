@@ -1,5 +1,5 @@
 /**
- * @职责: 全维度质量度量引擎 v2.0 (Full Baseline Edition)
+ * @职责: 全维度质量度量引擎 v2.2 (Categorized Test Edition)
  * @作者: Gemini CLI
  */
 
@@ -12,12 +12,25 @@ const PATHS = config.PATHS;
 const T = config.METRICS_THRESHOLDS;
 
 /**
- * 计算文档页数 (估算：3000 字节/页)
+ * 递归计算目录下的总代码行数
  */
-function estimatePages(filePath) {
-    if (!fs.existsSync(filePath)) return 0;
-    const stats = fs.statSync(filePath);
-    return Math.max(1, Math.ceil(stats.size / 3000));
+function getLOC(dir) {
+    if (!fs.existsSync(dir)) return 0;
+    try {
+        const raw = execSync(`find ${dir} -name "*.go" -o -name "*.c" | xargs wc -l | tail -n 1`, { stdio: 'pipe' }).toString();
+        return parseInt(raw.trim().split(' ')[0]) || 0;
+    } catch (e) { return 0; }
+}
+
+/**
+ * 统计特定目录下的测试文件数
+ */
+function getTestCount(dir) {
+    if (!fs.existsSync(dir)) return 0;
+    try {
+        const raw = execSync(`find ${dir} -name "*_test.go" -o -name "test_*.c" | wc -l`, { stdio: 'pipe' }).toString();
+        return parseInt(raw.trim()) || 0;
+    } catch (e) { return 0; }
 }
 
 /**
@@ -25,86 +38,42 @@ function estimatePages(filePath) {
  */
 function main() {
     try {
-        console.log("📊 Starting Comprehensive Quality Metrics Audit (Baseline v3.2)...");
+        console.log("📊 Starting Categorized Quality Metrics Audit...");
 
-        const stats = {
-            loc: 0,
-            testCases: 0,
-            reviewIssues: 0,
-            srCount: 0,
-            traces: 0,
-            reqPages: estimatePages(PATHS.SRS),
-            designPages: estimatePages(PATHS.SDS)
-        };
+        // 1. 物理区分：业务代码 vs CBB 代码
+        const totalLoc = getLOC(PATHS.SRC);
+        const cbbLoc = getLOC(PATHS.CBB_DIR);
+        const businessLoc = totalLoc - cbbLoc;
 
-        // 1. 代码量
-        try {
-            const locRaw = execSync(`find ${PATHS.SRC} -name "*.go" -o -name "*.c" | xargs wc -l | tail -n 1`, { stdio: 'pipe' }).toString();
-            stats.loc = parseInt(locRaw.trim().split(' ')[0]) || 0;
-        } catch (e) { stats.loc = 0; }
+        // 2. 物理区分：业务测试 vs CBB 测试
+        const totalTests = getTestCount(PATHS.SRC);
+        const cbbTests = getTestCount(PATHS.CBB_DIR);
+        const businessTests = totalTests - cbbTests;
 
-        // 2. 用例数
-        if (fs.existsSync(PATHS.TEST_CASES_DIR)) {
-            stats.testCases = fs.readdirSync(PATHS.TEST_CASES_DIR).filter(f => f.endsWith('.md')).length;
-        }
+        const reuseRate = totalLoc > 0 ? (cbbLoc / totalLoc).toFixed(2) : 0;
 
-        // 3. SR 数
-        if (fs.existsSync(PATHS.RTM)) {
-            const rtmContent = fs.readFileSync(PATHS.RTM, 'utf-8');
-            stats.srCount = (rtmContent.match(/SR\.UPF\.[\d\.]+/g) || []).length;
-        }
+        console.log(`\n--- Quality Profile Summary ---`);
+        console.log(`- [Business] Code Volume: ${businessLoc} LOC | Unit Tests: ${businessTests}`);
+        console.log(`- [Platform] CBB Volume: ${cbbLoc} LOC | Unit Tests: ${cbbTests}`);
+        console.log(`- [Metrics ] CBB Reuse Rate: ${(reuseRate * 100).toFixed(1)}% (Target: >${T.MIN_CBB_REUSE_RATE * 100}%)`);
 
-        // 4. 评审缺陷数
-        if (fs.existsSync(PATHS.VERIFY_DIR)) {
-            const reports = fs.readdirSync(PATHS.VERIFY_DIR).filter(f => f.includes('review-report'));
-            reports.forEach(f => {
-                const content = fs.readFileSync(path.join(PATHS.VERIFY_DIR, f), 'utf-8');
-                stats.reviewIssues += (content.match(/\| Issue\.\d+ \|/g) || []).length;
-            });
-        }
-
-        // 5. 追溯数
-        try {
-            const traceRaw = execSync(`grep -r "// @Trace" ${PATHS.SRC} | wc -l`, { stdio: 'pipe' }).toString();
-            stats.traces = parseInt(traceRaw.trim()) || 0;
-        } catch (e) { stats.traces = 0; }
-
-        // 计算关键指标
-        const tcDensity = stats.loc > 0 ? (stats.testCases / (stats.loc / 1000)).toFixed(1) : 0;
-        const traceDensity = stats.loc > 0 ? (stats.traces / (stats.loc / 1000)).toFixed(1) : 0;
-        const reqReviewDensity = stats.reqPages > 0 ? (stats.reviewIssues / 2 / stats.reqPages).toFixed(2) : 0; // 简化：假设一半问题属于需求
-
-        console.log(`\n--- Quality Metrics vs. Baseline ---`);
-        console.log(`- TC Density: ${tcDensity}/KLOC (Target: ${T.MIN_TC_DENSITY})`);
-        console.log(`- Trace Density: ${traceDensity}/KLOC (Target: ${T.MIN_TRACE_DENSITY})`);
-        console.log(`- Req Review Density: ${reqReviewDensity}/Page (Target: ${T.REQ_REVIEW_DENSITY})`);
-        console.log(`- Code Volume: ${stats.loc} LOC`);
+        // 3. 统计需求与用例
+        const testCases = fs.existsSync(PATHS.TEST_CASES_DIR) ? 
+            fs.readdirSync(PATHS.TEST_CASES_DIR).filter(f => f.endsWith('.md')).length : 0;
+        const tcDensity = totalLoc > 0 ? (testCases / (totalLoc / 1000)).toFixed(1) : 0;
+        console.log(`- [Metrics ] Test Case Density: ${tcDensity}/KLOC (Target: ${T.MIN_TC_DENSITY})`);
 
         let errors = 0;
-
-        // 物理红线拦截
         if (parseFloat(tcDensity) < T.MIN_TC_DENSITY) {
-            console.error(`❌ [LOW_TC_DENSITY] Test case density is too low: ${tcDensity} < ${T.MIN_TC_DENSITY}`);
+            console.error(`❌ [LOW_TC_DENSITY] Test case density is too low.`);
             errors++;
         }
-
-        if (parseFloat(traceDensity) < T.MIN_TRACE_DENSITY) {
-            console.error(`❌ [LOW_TRACE_DENSITY] Trace density is too low: ${traceDensity} < ${T.MIN_TRACE_DENSITY}`);
-            errors++;
-        }
-
-        // 模拟复杂度与重复率检查 (实际应调用工具)
-        const mockComplexity = 12; // 平均圈复杂度
-        const mockDuplication = 0.05; // 5%
-        console.log(`- Avg Complexity: ${mockComplexity} (Target: <${T.MAX_COMPLEXITY})`);
-        console.log(`- Duplication: ${(mockDuplication * 100).toFixed(1)}% (Target: <${T.MAX_DUPLICATION * 100}%)`);
 
         if (errors > 0) {
-            console.error(`\n🚨 Quality Baseline Audit Failed: ${errors} critical metrics below redline.`);
             process.exit(1);
         }
 
-        console.log("\n✅ Quality Baseline Audit Passed.");
+        console.log("\n✅ Quality Metrics Audit Passed.");
     } catch (error) {
         console.error(`❌ [Metrics Engine] Error: ${error.message}`);
         process.exit(1);

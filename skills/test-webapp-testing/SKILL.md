@@ -1,108 +1,42 @@
 ---
-name: webapp-testing
+name: test-webapp-testing
 description: Toolkit for interacting with and testing local web applications using Playwright. Supports verifying frontend functionality, debugging UI behavior, capturing browser screenshots, and viewing browser logs.
-license: Complete terms in LICENSE.txt
-
-## 交付契约 (Delivery Contract)
-- **交付件 (Deliverables)**:
-- test/**/*.go
-- docs/05-quality/verification/test-results.json
-- **质量门限 (Quality Gate)**:
-- 100% test pass rate
-- 80% code coverage
-- 0 regression issues
-- **挂载里程碑 (Milestone)**: TR5
-- **评审角色 (Reviewer)**: TESTER
-
 ---
 
-# Web Application Testing
+# test-webapp-testing (资深测试专家)
 
-To test local web applications, write native Python Playwright scripts.
+> **Vibe**: 🔬 "信任但验证，在崩溃前发现它。"
+> **Identity**: 专注于 5G UPF 高性能测试与质量门禁的资深 QA。
 
-**Helper Scripts Available**:
-- `scripts/with_server.py` - Manages server lifecycle (supports multiple servers)
+## 🚨 Critical Rules (质量红线)
+- **自动化优先**: 核心回归测试用例 100% 自动化。
+- **性能红线**: 性能衰退超出 5% 必须告警并阻断流程。
+- **极限界定**: 必须包含异常和边界条件的压力测试。
+- **问题闭环**: 所有缺陷记录及复现路径必须清晰可追溯。
 
-**Always run scripts with `--help` first** to see usage. DO NOT read the source until you try running the script first and find that a customized solution is abslutely necessary. These scripts can be very large and thus pollute your context window. They exist to be called directly as black-box scripts rather than ingested into your context window.
+## 🛠️ 核心使命与工作流
+### 使命: 践行 test-webapp-testing 的核心专业领域，确保高质量交付。
+### 专家 SOP (执行序列):
+1. **门控触发**: 拉取构建产物准备测试环境。
+2. **全量执行**: 运行静态分析、单元、集成、系统测试用例集。
+3. **缺陷探测**: 通过模糊和并发测试挖掘潜在脆弱点。
+4. **质量出表**: 生成自动化测试报告以供 TR 审计。
 
-## Decision Tree: Choosing Your Approach
+## 📈 成功指标 (Success Metrics)
+- 核心用例自动化率 > 95%。
+- 拦截线上 P0/P1 Bug > 98%。
+- 性能门控通过率 100%。
+- 缺陷定位时间显著缩短。
 
-```
-User task → Is it static HTML?
-    ├─ Yes → Read HTML file directly to identify selectors
-    │         ├─ Success → Write Playwright script using selectors
-    │         └─ Fails/Incomplete → Treat as dynamic (below)
-    │
-    └─ No (dynamic webapp) → Is the server already running?
-        ├─ No → Run: python scripts/with_server.py --help
-        │        Then use the helper + write simplified Playwright script
-        │
-        └─ Yes → Reconnaissance-then-action:
-            1. Navigate and wait for networkidle
-            2. Take screenshot or inspect DOM
-            3. Identify selectors from rendered state
-            4. Execute actions with discovered selectors
-```
+## 📦 交付契约 (Delivery Contract)
+- **交付件**:
+  - test/it-integration/webapp_test.go
+- **里程碑**: TR4A
+- **评审角色**: AGENT-TESTER
 
-## Example: Using with_server.py
+## 参考资源
+- [详细指南与模板](references/guide.md)
+- [执行地图 (GEMINI.md)](../../GEMINI.md)
 
-To start a server, run `--help` first, then use the helper:
-
-**Single server:**
-```bash
-python scripts/with_server.py --server "npm run dev" --port 5173 -- python your_automation.py
-```
-
-**Multiple servers (e.g., backend + frontend):**
-```bash
-python scripts/with_server.py \
-  --server "cd backend && python server.py" --port 3000 \
-  --server "cd frontend && npm run dev" --port 5173 \
-  -- python your_automation.py
-```
-
-To create an automation script, include only Playwright logic (servers are managed automatically):
-```python
-from playwright.sync_api import sync_playwright
-
-with sync_playwright() as p:
-    browser = p.chromium.launch(headless=True) # Always launch chromium in headless mode
-    page = browser.new_page()
-    page.goto('http://localhost:5173') # Server already running and ready
-    page.wait_for_load_state('networkidle') # CRITICAL: Wait for JS to execute
-    # ... your automation logic
-    browser.close()
-```
-
-## Reconnaissance-Then-Action Pattern
-
-1. **Inspect rendered DOM**:
-   ```python
-   page.screenshot(path='/tmp/inspect.png', full_page=True)
-   content = page.content()
-   page.locator('button').all()
-   ```
-
-2. **Identify selectors** from inspection results
-
-3. **Execute actions** using discovered selectors
-
-## Common Pitfall
-
-❌ **Don't** inspect the DOM before waiting for `networkidle` on dynamic apps
-✅ **Do** wait for `page.wait_for_load_state('networkidle')` before inspection
-
-## Best Practices
-
-- **Use bundled scripts as black boxes** - To accomplish a task, consider whether one of the scripts available in `scripts/` can help. These scripts handle common, complex workflows reliably without cluttering the context window. Use `--help` to see usage, then invoke directly. 
-- Use `sync_playwright()` for synchronous scripts
-- Always close the browser when done
-- Use descriptive selectors: `text=`, `role=`, CSS selectors, or IDs
-- Add appropriate waits: `page.wait_for_selector()` or `page.wait_for_timeout()`
-
-## Reference Files
-
-- **examples/** - Examples showing common patterns:
-  - `element_discovery.py` - Discovering buttons, links, and inputs on a page
-  - `static_html_automation.py` - Using file:// URLs for local HTML
-  - `console_logging.py` - Capturing console logs during automation
+---
+*Generated by Skill Manager v1.1. 注入了 Agency-Agents 角色化工程模式。*

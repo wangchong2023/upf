@@ -1,10 +1,10 @@
-# TC.SR.UPF.004.04.010 - [测试名称]
+# [TC.ID] - [测试名称]
 
 ## 1. 基本信息
 | 属性 | 描述 |
 | :--- | :--- |
-| **测试 ID** | TC.SR.UPF.004.04.010 |
-| **关联需求** | AR.UPF.004.04.010.01 |
+| **测试 ID** | TC.SR.UPF.XXX |
+| **关联需求** | AR.UPF.XXX |
 | **测试级别** | IT (集成测试) / ST (系统测试) |
 | **预置条件** | UPF 基础配置已完成，N4 接口可达 |
 
@@ -23,9 +23,3 @@
 
 ---
 *Created via automation from RTM.*
-
-## 3. 测试步骤
-1. 启动 gNB 模拟器并注册 UPF。
-2. 发送 PFCP Session Establishment Request。
-3. 物理核实 VPP 数据面 FIB 表项已正确注入。
-4. 执行双向 PING 测试，验证 N3/N6 连通性。
