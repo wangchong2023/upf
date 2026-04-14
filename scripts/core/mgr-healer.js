@@ -129,6 +129,15 @@ function tryHeal(errorOutput, milestone, agent = 'N/A') {
     return null;
 }
 
+if (require.main === module) {
+    const args = process.argv.slice(2);
+    const milestone = args.find(a => a.startsWith('--milestone='))?.split('=')[1] || 'GENERAL';
+    const agent = args.find(a => a.startsWith('--agent='))?.split('=')[1] || 'N/A';
+    const errorOutput = process.env.ERROR_OUTPUT || "";
+    
+    tryHeal(errorOutput, milestone, agent);
+}
+
 module.exports = {
     tryHeal,
     archiveHealingAction

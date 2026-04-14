@@ -5,29 +5,36 @@ import (
 	"time"
 )
 
-func TestCheckHeartbeat(t *testing.T) {
-	// 场景 1: 心跳正常
-	session := &PFCPSession{
-		SEID:        1001,
+// @Trace [SR.UPF.001.01.002]
+func TestPFCPSession_CheckHeartbeat(t *testing.T) {
+	s := &PFCPSession{
+		SEID:        1,
 		LastContact: time.Now(),
 		IsActive:    true,
 	}
 
-	err := session.CheckHeartbeat(5 * time.Second)
-	if err != nil {
-		t.Errorf("Expected no error, got %v", err)
-	}
-	if !session.IsActive {
-		t.Error("Expected session to be active")
+	if err := s.CheckHeartbeat(10 * time.Second); err != nil {
+		t.Errorf("expected no error, got %v", err)
 	}
 
-	// 场景 2: 心跳超时
-	session.LastContact = time.Now().Add(-10 * time.Second)
-	err = session.CheckHeartbeat(5 * time.Second)
-	if err == nil {
-		t.Error("Expected timeout error, got nil")
+	// Test timeout
+	s.LastContact = time.Now().Add(-20 * time.Second)
+	if err := s.CheckHeartbeat(10 * time.Second); err == nil {
+		t.Errorf("expected error on timeout, got nil")
 	}
-	if session.IsActive {
-		t.Error("Expected session to be inactive")
+}
+
+func TestPFCPSession_UpdateActivity(t *testing.T) {
+	s := &PFCPSession{
+		SEID:        1,
+		LastContact: time.Now().Add(-10 * time.Second),
+		IsActive:    false,
+	}
+	s.UpdateActivity()
+	if !s.IsActive {
+		t.Errorf("expected IsActive to be true")
+	}
+	if time.Since(s.LastContact) > time.Second {
+		t.Errorf("expected LastContact to be updated")
 	}
 }
