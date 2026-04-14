@@ -2,7 +2,8 @@ package oam
 
 import "testing"
 
+// @Trace [SR.UPF.001.01.001]
 func TestLogger(t *testing.T) {
-	// CBB 独立验证逻辑
-	t.Log("CBB Logger Verification Passed")
+	Info("test info")
+	Error("test error")
 }

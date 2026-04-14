@@ -67,6 +67,8 @@ try {
             API_DIR: 'docs/02-design/api/',
             ARCH_DIR: 'docs/02-design/arch/',
             ADR_DIR: 'docs/02-design/arch/adr/',
+            LLD_DIR: 'docs/02-design/lld/',
+            STATE_STORAGE: 'build/rd_state_storage.sqlite',
             API_YAML: 'docs/02-design/api/external/3gpp-n4.yaml',
             OSS_REPORT: 'docs/05-quality/verification/oss-compliance-report.md',
             OSS_ATTRIBUTIONS: 'docs/05-quality/OSS_ATTRIBUTIONS.md',

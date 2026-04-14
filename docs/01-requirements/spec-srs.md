@@ -1,7 +1,38 @@
-# 5G UPF 系统需求规格说明书 (SRS)
+# 5G UPF 软件需求规格说明书 (SRS - IPD 标准)
 
-| SR ID | 关联 IR | 类型 | 规格详述 (Action + Object + Metric) | 协议遵循 |
+## 📦 Version: v1.0.0
+### RR (Raw Requirement)
+| 编号 | 来源 | 描述 | 优先级 |
+| :--- | :--- | :--- | :--- |
+| **RR.UPF.001** | 特性清单 | **操作维护（OAM）** | P1 |
+
+### IR (Initial Requirement)
+| 编号 | 关联 RR | 类型 | 特性描述 | 目标 |
+| :--- | :--- | :--- | :--- |
+| **IR.UPF.001.01** | RR.UPF.001 | FUN | **故障管理** | - |
+
+### SR (System Requirement)
+| 编号 | 关联 IR | 类型 | 规格详述 | 协议遵循 |
 | :--- | :--- | :--- | :--- | :--- |
-| **SR.UPF.001.02.001** | IR.UPF.001.02 | FUN | **N4 路径故障探测**: 系统必须每隔 T1 (1-60s 可配) 发送 PFCP Heartbeat Request；若连续 N1 (1-5 次) 未收到响应，必须判定对端故障。判定延时误差需控制在 100ms 以内。 | TS 29.244 Clause 6.2.2 |
-| **SR.UPF.001.02.002** | IR.UPF.001.02 | DFX | **路径故障可观测性**: 当 N4 链路判定为 DEAD 时，系统必须在 50ms 内触发 `ERR_PFCP_HB_TIMEOUT` 结构化日志，并原子累加 `upf_n4_path_failure_total` 指标。 | TS 32.401 |
-| **SR.UPF.009.01.001** | IR.UPF.009.01 | FUN | 实现 N3 接口 GTP-U 扩展报头物理解析，单次解析时延 < 100ns。 | TS 29.281 |
+| **SR.UPF.001.01.001** | IR.UPF.001.01 | FUN | **告警管理** | - |
+| **SR.UPF.001.01.002** | IR.UPF.001.01 | FUN | **N4链路PFCP心跳检测超时** | - |
+| **SR.UPF.001.01.003** | IR.UPF.001.01 | FUN | **报头处理** | - |
+| **SR.UPF.001.01.004** | IR.UPF.001.01 | FUN | **GTP-U 增强** | - |
+| **SR.UPF.001.01.005** | IR.UPF.001.01 | FUN | **支持 N3 接口 GTP-U 扩展报头 (PDU Session Container) 物理解析** | - |
+
+## 📦 Version: v1.1.0
+### RR (Raw Requirement)
+| 编号 | 来源 | 描述 | 优先级 |
+| :--- | :--- | :--- | :--- |
+
+
+### IR (Initial Requirement)
+| 编号 | 关联 RR | 类型 | 特性描述 | 目标 |
+| :--- | :--- | :--- | :--- |
+
+
+### SR (System Requirement)
+| 编号 | 关联 IR | 类型 | 规格详述 | 协议遵循 |
+| :--- | :--- | :--- | :--- | :--- |
+
+

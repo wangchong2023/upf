@@ -104,6 +104,9 @@ auto-doc-check:
 flow-dryrun:
 	$(NODE) scripts/core/flow-dryrun.js
 
+ipd-orchestrator:
+	$(NODE) scripts/core/langgraph-upf-orchestrator.js
+
 format-scripts:
 	$(NODE) scripts/tools/mgr-script-audit.js --fix
 
